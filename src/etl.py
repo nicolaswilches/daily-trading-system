@@ -1,19 +1,6 @@
 import polars as pl
 import os
 
-def calculate_rsi(series, period=14):
-    """Calculate the Relative Strength Index (RSI)."""
-    delta = series.diff()
-    gain = delta.map_elements(lambda x: x if x > 0 else 0, return_dtype=pl.Float64)
-    loss = delta.map_elements(lambda x: -x if x < 0 else 0, return_dtype=pl.Float64)
-    
-    avg_gain = gain.rolling_mean(window_size=period)
-    avg_loss = loss.rolling_mean(window_size=period)
-    
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
 def process_data(input_path, output_path):
     print(f"Loading data from {input_path}...")
     df = pl.read_parquet(input_path)
@@ -22,13 +9,16 @@ def process_data(input_path, output_path):
     df = df.sort(["Ticker", "Date"])
     
     # Ensure types
+    if df.schema["Date"] == pl.String:
+        df = df.with_columns(pl.col("Date").str.strptime(pl.Date, "%Y-%m-%d"))
+        
     df = df.with_columns([
-        pl.col("Date").str.strptime(pl.Date, "%Y-%m-%d"),
         pl.col("Close").cast(pl.Float64),
         pl.col("Open").cast(pl.Float64),
         pl.col("High").cast(pl.Float64),
         pl.col("Low").cast(pl.Float64),
         pl.col("Volume").cast(pl.Float64),
+        pl.col("Dividend").fill_null(0.0).cast(pl.Float64),
     ])
 
     print("Calculating features...")
@@ -54,8 +44,10 @@ def process_data(input_path, output_path):
         (pl.col("Target_Next_Price") > pl.col("Close")).cast(pl.Int64).alias("Target_Is_Up")
     ])
 
-    # Drop rows with nulls (due to rolling windows and shift)
-    df = df.drop_nulls()
+    # Drop rows with nulls in key feature/target columns
+    # We drop nulls in SMA_50 because it's our largest window
+    # We drop nulls in Target_Is_Up because it's our prediction target
+    df = df.drop_nulls(subset=["SMA_50", "Target_Is_Up"])
     
     print(f"Saving processed features to {output_path}...")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

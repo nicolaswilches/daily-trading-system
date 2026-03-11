@@ -1,70 +1,51 @@
 import os
-import requests
+import simfin as sf
 import polars as pl
 from dotenv import load_dotenv
-import time
 
 # Load API key
 load_dotenv()
 API_KEY = os.getenv("SIMFIN_API_KEY")
-BASE_URL = "https://backend.simfin.com/api/v1"
 
 # Tickers to fetch
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META"]
-
-def fetch_prices(ticker):
-    """Fetch daily share prices for a given ticker."""
-    print(f"Fetching prices for {ticker}...")
-    url = f"{BASE_URL}/info/share-prices"
-    params = {
-        "ticker": ticker,
-        "start": "2019-01-01",
-        "end": "2025-01-01"
-    }
-    headers = {
-        "Authorization": f"api-key {API_KEY}"
-    }
-    
-    try:
-        response = requests.get(url, params=params, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        
-        # Check if the response contains the expected data
-        if not data or "data" not in data:
-            print(f"No data found for {ticker}")
-            return None
-            
-        columns = data["columns"]
-        rows = data["data"]
-        
-        df = pl.DataFrame(rows, schema=columns, orient="row")
-        df = df.with_columns(pl.lit(ticker).alias("Ticker"))
-        return df
-    except Exception as e:
-        print(f"Error fetching {ticker}: {e}")
-        return None
 
 def main():
     if not API_KEY or API_KEY == "YOUR_API_KEY_HERE":
         print("Please set your SIMFIN_API_KEY in the .env file.")
         return
 
-    all_data = []
-    for ticker in TICKERS:
-        df = fetch_prices(ticker)
-        if df is not None:
-            all_data.append(df)
-        # Respect rate limits (max 2 requests per second)
-        time.sleep(1) 
+    # Set up simfin
+    sf.set_api_key(API_KEY)
+    sf.set_data_dir("data/raw")
     
-    if all_data:
-        final_df = pl.concat(all_data)
-        os.makedirs("data/raw", exist_ok=True)
-        final_df.write_parquet("data/raw/prices.parquet")
-        print(f"Saved {len(final_df)} rows to data/raw/prices.parquet")
+    print("Fetching/Updating bulk US share prices (daily)...")
+    csv_path = "data/raw/us-shareprices-daily.csv"
+    
+    try:
+        # This will download the zip and extract the CSV if not present
+        # We ignore the return value because it might fail on older pandas
+        sf.load_shareprices(variant='daily', market='us')
+    except Exception as e:
+        print(f"Note: sf.load_shareprices encountered an error during CSV loading, but data may be on disk: {e}")
+
+    if os.path.exists(csv_path):
+        print(f"Loading {csv_path} with Polars...")
+        # SimFin CSVs use semicolon (;) as separator
+        df = pl.read_csv(csv_path, separator=";", try_parse_dates=True)
+        
+        # Filter for our tickers
+        df_filtered = df.filter(pl.col("Ticker").is_in(TICKERS))
+        
+        # Save to parquet for our ETL pipeline
+        output_path = "data/raw/prices.parquet"
+        df_filtered.write_parquet(output_path)
+        
+        print(f"Successfully saved {len(df_filtered)} rows to {output_path}")
+        if len(df_filtered) > 0:
+            print(f"Date range: {df_filtered['Date'].min()} to {df_filtered['Date'].max()}")
     else:
-        print("No data fetched.")
+        print(f"Error: CSV file not found at {csv_path}")
 
 if __name__ == "__main__":
     main()
