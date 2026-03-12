@@ -1,13 +1,23 @@
 import os
 import simfin as sf
 import polars as pl
+import pandas as pd
 from dotenv import load_dotenv
 
-# Load API key
+# --- MONKEYPATCH FOR SIMFIN/PANDAS COMPATIBILITY ---
+# Newer pandas deprecated 'date_parser' in favor of 'date_format' or 'parse_dates'
+# We temporarily wrap read_csv to handle the old argument used by simfin
+original_read_csv = pd.read_csv
+def patched_read_csv(*args, **kwargs):
+    if 'date_parser' in kwargs:
+        kwargs.pop('date_parser')
+        kwargs['parse_dates'] = True 
+    return original_read_csv(*args, **kwargs)
+pd.read_csv = patched_read_csv
+# ----------------------------------------------------
+
 load_dotenv()
 API_KEY = os.getenv("SIMFIN_API_KEY")
-
-# Tickers to fetch
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META"]
 
 def main():
@@ -15,37 +25,37 @@ def main():
         print("Please set your SIMFIN_API_KEY in the .env file.")
         return
 
-    # Set up simfin
     sf.set_api_key(API_KEY)
     sf.set_data_dir("data/raw")
     
-    print("Fetching/Updating bulk US share prices (daily)...")
-    csv_path = "data/raw/us-shareprices-daily.csv"
+    print("Fetching bulk US data (Prices, Companies, Fundamentals)...")
     
     try:
-        # This will download the zip and extract the CSV if not present
-        # We ignore the return value because it might fail on older pandas
+        # These functions will now use our patched read_csv
         sf.load_shareprices(variant='daily', market='us')
+        sf.load_companies(market='us')
+        sf.load_income(variant='quarterly', market='us')
+        sf.load_balance(variant='quarterly', market='us')
     except Exception as e:
-        print(f"Note: sf.load_shareprices encountered an error during CSV loading, but data may be on disk: {e}")
+        print(f"Error during sf.load calls: {e}")
 
-    if os.path.exists(csv_path):
-        print(f"Loading {csv_path} with Polars...")
-        # SimFin CSVs use semicolon (;) as separator
-        df = pl.read_csv(csv_path, separator=";", try_parse_dates=True)
-        
-        # Filter for our tickers
-        df_filtered = df.filter(pl.col("Ticker").is_in(TICKERS))
-        
-        # Save to parquet for our ETL pipeline
-        output_path = "data/raw/prices.parquet"
-        df_filtered.write_parquet(output_path)
-        
-        print(f"Successfully saved {len(df_filtered)} rows to {output_path}")
-        if len(df_filtered) > 0:
-            print(f"Date range: {df_filtered['Date'].min()} to {df_filtered['Date'].max()}")
-    else:
-        print(f"Error: CSV file not found at {csv_path}")
+    def process_csv(filename, output_name, sep=";"):
+        path = f"data/raw/{filename}"
+        if os.path.exists(path):
+            print(f"Filtering {filename}...")
+            # We use ignore_errors because some SimFin CSVs have trailing delimiters
+            df = pl.read_csv(path, separator=sep, try_parse_dates=True, ignore_errors=True)
+            ticker_col = "Ticker" if "Ticker" in df.columns else "Ticker Symbol"
+            df_filtered = df.filter(pl.col(ticker_col).is_in(TICKERS))
+            df_filtered.write_parquet(f"data/raw/{output_name}.parquet")
+            print(f"Saved {output_name}.parquet")
+        else:
+            print(f"Error: {filename} not found.")
+
+    process_csv("us-shareprices-daily.csv", "prices")
+    process_csv("us-companies.csv", "companies")
+    process_csv("us-income-quarterly.csv", "income")
+    process_csv("us-balance-quarterly.csv", "balance")
 
 if __name__ == "__main__":
     main()

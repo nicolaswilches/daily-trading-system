@@ -1,1 +1,8 @@
-data/\nmodels/\n.env\n.venv/\n__pycache__/\n.ipynb_checkpoints/
+data/raw/
+.env
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+*.csv
+*.zip
+# We keep models/ and processed/ features
