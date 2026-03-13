@@ -7,7 +7,7 @@ st.set_page_config(page_title="Market Analysis", layout="wide")
 apply_custom_style()
 
 # 1. Sidebar Configuration
-tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META"]
+tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "TSLA", "NVDA", "META"]
 selected_ticker = st.sidebar.selectbox("Select Asset", tickers)
 
 # Auto-execute on selection
@@ -22,9 +22,10 @@ if selected_ticker:
             col_head1, col_head2 = st.columns([0.1, 5])
             with col_head1:
                 # Use Clearbit for logos
-                logo_url = f"https://logo.clearbit.com/{selected_ticker.lower()}.com"
-                if selected_ticker == "GOOGL": logo_url = "https://logo.clearbit.com/google.com"
-                if selected_ticker == "META": logo_url = "https://logo.clearbit.com/meta.com"
+                logo_ticker = selected_ticker.lower()
+                if selected_ticker == "GOOG": logo_url = "https://logo.clearbit.com/google.com"
+                elif selected_ticker == "META": logo_url = "https://logo.clearbit.com/meta.com"
+                else: logo_url = f"https://logo.clearbit.com/{logo_ticker}.com"
                 st.image(logo_url, width=60)
             with col_head2:
                 st.title(f"{selected_ticker} Analysis")

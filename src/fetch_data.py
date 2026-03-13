@@ -18,7 +18,7 @@ pd.read_csv = patched_read_csv
 
 load_dotenv()
 API_KEY = os.getenv("SIMFIN_API_KEY")
-TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META"]
+TICKERS = ["AAPL", "MSFT", "GOOG", "AMZN", "TSLA", "NVDA", "META"]
 
 def main():
     if not API_KEY or API_KEY == "YOUR_API_KEY_HERE":

@@ -10,11 +10,20 @@ def run_prediction(ticker):
     """
     api = PySimFin()
     
+    # SimFin ticker mapping
+    search_ticker = ticker
+    if ticker == "GOOGL": search_ticker = "GOOG"
+    
     # 1. Fetch live data
-    df_prices = api.get_share_prices(ticker)
+    try:
+        df_prices = api.get_share_prices(search_ticker)
+    except Exception as e:
+        if "429" in str(e):
+            return {"error": "API Limit Reached. Please try again tomorrow (Free tier quota exhausted)."}
+        return {"error": f"API Error: {e}"}
     
     if df_prices is None or len(df_prices) < 200:
-        return {"error": f"Insufficient data for {ticker}."}
+        return {"error": f"Insufficient data for {ticker} (fetched as {search_ticker})."}
         
     # 2. Cleaning and Sorting
     df = df_prices.with_columns([
