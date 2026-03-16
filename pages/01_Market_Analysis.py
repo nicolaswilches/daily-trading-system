@@ -6,8 +6,17 @@ from src.styles import apply_custom_style, MOCHA, get_plotly_template
 
 apply_custom_style()
 
+# Company info
+TICKER_INFO = {
+    "AAPL": {"name": "Apple Inc.", "logo": "assets/logos/AAPL.png"},
+    "MSFT": {"name": "Microsoft Corporation", "logo": "assets/logos/MSFT.png"},
+    "AMZN": {"name": "Amazon.com Inc.", "logo": "assets/logos/AMZN.png"},
+    "TSLA": {"name": "Tesla Inc.", "logo": "assets/logos/TSLA.png"},
+    "NVDA": {"name": "NVIDIA Corporation", "logo": "assets/logos/NVDA.png"},
+}
+
 # ── Sidebar ───────────────────────────────────────────────────────────
-tickers = ["AAPL", "MSFT", "GOOG", "AMZN", "TSLA", "NVDA", "META"]
+tickers = ["AAPL", "MSFT", "AMZN", "TSLA", "NVDA"]
 selected_ticker = st.sidebar.selectbox("Select Asset", tickers)
 
 if selected_ticker:
@@ -17,112 +26,152 @@ if selected_ticker:
         if "error" in result:
             st.error(result["error"])
         else:
+            # Resolve company info before columns so both sides can use it
+            company_info = TICKER_INFO.get(
+                selected_ticker, {"name": f"{selected_ticker} Corporation"}
+            )
+
             # ── Header ────────────────────────────────────────────
-            col_h1, col_h2 = st.columns([0.08, 5])
-            with col_h1:
-                logo_ticker = selected_ticker.lower()
-                if selected_ticker == "GOOG":
-                    logo_url = "https://logo.clearbit.com/google.com"
-                elif selected_ticker == "META":
-                    logo_url = "https://logo.clearbit.com/meta.com"
-                else:
-                    logo_url = f"https://logo.clearbit.com/{logo_ticker}.com"
-                st.image(logo_url, width=52)
-            with col_h2:
-                st.title(f"{selected_ticker} Analysis")
+            col_left, col_spacer, col_right = st.columns([5, 3, 1])
+
+            with col_left:
+                st.title(selected_ticker)
+                st.markdown(f"**{company_info['name']}**")
                 st.caption(f"Last updated: {result['last_updated']}")
 
-            # ── KPI Cards ─────────────────────────────────────────
-            k1, k2, k3, k4, k5 = st.columns(5)
+            with col_right:
+                logo_path = company_info.get("logo", "")
+                if logo_path:
+                    st.image(logo_path, width=70)
 
-            change_color = MOCHA["green"] if result["change_pct"] >= 0 else MOCHA["red"]
-            change_sign = "+" if result["change_pct"] >= 0 else ""
+            # ── Square KPI Cards with Color Highlighting ─────────
+            k1, k2, k3, k4, k5, k6 = st.columns(6)
+
+            # Signal card
+            signal = result["signal"]
+            if signal == "BUY":
+                sig_color = MOCHA["green"]
+                sig_bg = "rgba(166, 227, 161, 0.12)"
+            elif signal == "SELL":
+                sig_color = MOCHA["red"]
+                sig_bg = "rgba(243, 139, 168, 0.12)"
+            else:
+                sig_color = MOCHA["yellow"]
+                sig_bg = "rgba(249, 226, 175, 0.12)"
 
             with k1:
                 st.markdown(
                     f"""
-                    <div class="kpi-container">
-                        <div class="kpi-label">Current Price</div>
-                        <div class="kpi-value">${result["current_price"]:.2f}</div>
-                        <div class="kpi-delta" style="color: {change_color};">
-                            {change_sign}{result["change_pct"]:.2f}%
+                    <div class="kpi-container square" style="border-color: {sig_color}; 
+                                                           border-width: 2px;
+                                                           background-color: {sig_bg};">
+                        <div class="kpi-label">Signal</div>
+                        <div class="kpi-value" style="color: {sig_color}; font-size: 1.4rem;">{signal}</div>
+                        <div class="kpi-delta" style="color: {sig_color};">
+                            {result["prob_up"] * 100:.1f}%
                         </div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
+
+            # Current Price with day-over-day change and highlighting
+            change_pct = float(result.get("change_pct", 0))
+            change_color = MOCHA["green"] if change_pct >= 0 else MOCHA["red"]
+            change_bg = (
+                "rgba(166, 227, 161, 0.08)"
+                if change_pct >= 0
+                else "rgba(243, 139, 168, 0.08)"
+            )
+            change_sign = "+" if change_pct >= 0 else ""
+
             with k2:
                 st.markdown(
-                    f'<div class="kpi-container"><div class="kpi-label">Day High</div>'
-                    f'<div class="kpi-value">${result["high"]:.2f}</div></div>',
+                    f"""
+                    <div class="kpi-container square" style="background-color: {change_bg}; 
+                                                           border-color: {change_color}; 
+                                                           border-width: 2px;">
+                        <div class="kpi-label">Current Price</div>
+                        <div class="kpi-value">${result["current_price"]:.2f}</div>
+                        <div class="kpi-delta" style="color: {change_color};">
+                            {change_sign}{change_pct:.2f}%
+                        </div>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
+
             with k3:
                 st.markdown(
-                    f'<div class="kpi-container"><div class="kpi-label">Day Low</div>'
-                    f'<div class="kpi-value">${result["low"]:.2f}</div></div>',
+                    f"""
+                    <div class="kpi-container square">
+                        <div class="kpi-label">Day High</div>
+                        <div class="kpi-value">${result["high"]:.2f}</div>
+                        <div class="kpi-delta" style="color: {MOCHA["subtext0"]};">
+                            Session high
+                        </div>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
+
             with k4:
                 st.markdown(
-                    f'<div class="kpi-container"><div class="kpi-label">Volume</div>'
-                    f'<div class="kpi-value">{result["volume"] / 1e6:.1f}M</div></div>',
+                    f"""
+                    <div class="kpi-container square">
+                        <div class="kpi-label">Day Low</div>
+                        <div class="kpi-value">${result["low"]:.2f}</div>
+                        <div class="kpi-delta" style="color: {MOCHA["subtext0"]};">
+                            Session low
+                        </div>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
+
+            # Handle volume conversion safely
+            volume = float(result.get("volume", 0))
+
             with k5:
                 st.markdown(
-                    f'<div class="kpi-container"><div class="kpi-label">Target Price</div>'
-                    f'<div class="kpi-value">${result["target_price"]:.2f}</div></div>',
+                    f"""
+                    <div class="kpi-container square">
+                        <div class="kpi-label">Volume</div>
+                        <div class="kpi-value">{volume / 1e6:.1f}M</div>
+                        <div class="kpi-delta" style="color: {MOCHA["subtext0"]};">
+                            Shares traded
+                        </div>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
 
-            # ── Trading Signal ────────────────────────────────────
-            signal = result["signal"]
-            if signal == "BUY":
-                sig_color = MOCHA["green"]
-            elif signal == "SELL":
-                sig_color = MOCHA["red"]
-            else:
-                sig_color = MOCHA["yellow"]
-
-            st.markdown(
-                f"""
-                <div class="signal-banner"
-                     style="background-color: {sig_color}12;
-                            border: 1px solid {sig_color};">
-                    <h2 style="color: {sig_color};">{signal}</h2>
-                    <span class="conf" style="color: {sig_color};">
-                        Model Confidence: {result["prob_up"] * 100:.1f}%
-                    </span>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            with st.expander("How is the signal determined?"):
+            with k6:
                 st.markdown(
                     f"""
-                    The LightGBM classifier outputs a probability that the
-                    stock's price will increase in the next trading session.
-
-                    | Probability | Signal |
-                    |---|---|
-                    | > 55 % | **BUY** |
-                    | 45 – 55 % | **HOLD** |
-                    | < 45 % | **SELL** |
-
-                    The **confidence** value shown is the model's raw
-                    probability of an upward move.  A companion regression
-                    model estimates the expected magnitude and derives the
-                    **Target Price**.
-                    """
+                    <div class="kpi-container square">
+                        <div class="kpi-label">Target Price</div>
+                        <div class="kpi-value">${result["target_price"]:.2f}</div>
+                        <div class="kpi-delta" style="color: {MOCHA["subtext0"]};">
+                            Model prediction
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
                 )
 
             st.divider()
 
             # ── Historical Charts ─────────────────────────────────
             st.markdown("#### Market History")
-            hist = result["history"].tail(100).to_pandas()
+
+            # Handle history data safely
+            if hasattr(result["history"], "tail"):
+                hist = result["history"].tail(100).to_pandas()
+            else:
+                st.error("Unable to load historical data for charting.")
+                st.stop()
+
             layout = get_plotly_template()
 
             tab1, tab2 = st.tabs(["Candlestick + Volume", "Price + Moving Averages"])

@@ -136,7 +136,7 @@ try:
                     y=drawdown * 100,
                     fill="tozeroy",
                     line=dict(color=MOCHA["red"], width=1),
-                    fillcolor=f"{MOCHA['red']}20",
+                    fillcolor=f"rgba(243, 139, 168, 0.2)",
                     name="Drawdown %",
                 )
             )

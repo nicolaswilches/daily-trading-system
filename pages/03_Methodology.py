@@ -46,7 +46,8 @@ try:
         ("Step 4", "Live Prediction", "Real-time inference on latest market data"),
     ]
 
-    cols = st.columns(len(steps) * 2 - 1)
+    # Use wider columns with smaller arrows for better card layout
+    cols = st.columns([4, 0.5, 4, 0.5, 4, 0.5, 4])
     for i, (num, title, desc) in enumerate(steps):
         with cols[i * 2]:
             st.markdown(
@@ -99,9 +100,9 @@ try:
 
         m1, m2, m3, m4 = st.columns(4)
         for col, label, value in [
-            (m1, "Precision", f"{precision:.3f}"),
-            (m2, "Recall", f"{recall:.3f}"),
-            (m3, "Accuracy", f"{accuracy:.3f}"),
+            (m1, "Precision", f"{precision * 100:.1f}%"),
+            (m2, "Recall", f"{recall * 100:.1f}%"),
+            (m3, "Accuracy", f"{accuracy * 100:.1f}%"),
             (m4, "F1 Score", f"{f1:.3f}"),
         ]:
             with col:

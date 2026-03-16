@@ -14,10 +14,10 @@ st.set_page_config(
 # When users navigate to the root, they see the Home page content.
 pg = st.navigation(
     [
-        st.Page("pages/00_Home.py", title="Home", icon="🏠", default=True),
-        st.Page("pages/01_Market_Analysis.py", title="Market Analysis", icon="📈"),
-        st.Page("pages/02_Trading_Strategy.py", title="Trading Strategy", icon="⚡"),
-        st.Page("pages/03_Methodology.py", title="Methodology", icon="🔬"),
+        st.Page("pages/00_Home.py", title="Home", default=True),
+        st.Page("pages/01_Market_Analysis.py", title="Go Live"),
+        st.Page("pages/02_Trading_Strategy.py", title="Trading Strategy"),
+        st.Page("pages/03_Methodology.py", title="Methodology"),
     ]
 )
 pg.run()
