@@ -13,10 +13,10 @@ A quantitative trading pipeline that forecasts next-day stock price direction an
 
 The system is structured as two cooperating modules:
 
-1. **Offline Pipeline** — ingests 5 years of historical OHLCV and corporate fundamentals from SimFin, engineers 70+ features with Polars, and trains two LightGBM models optimized via Optuna Bayesian search.
-2. **Live Dashboard** — a multi-page Streamlit application that fetches real-time data, runs inference, displays trading signals, and simulates historical strategy performance against a buy-and-hold benchmark.
+1. **Offline Pipeline:** Ingests 5 years of historical OHLCV and corporate fundamentals from SimFin, engineers 70+ features with Polars, and trains two LightGBM models optimized via Optuna Bayesian search.
+2. **Live Dashboard:** A Streamlit application that fetches real-time data, runs inference, displays trading signals, and simulates historical strategy performance against a buy-and-hold benchmark.
 
-**Core stack:** LightGBM · Optuna · Polars · scikit-learn · Streamlit · SimFin API · Python 3.12+
+**Core stack:** Polars, scikit-learn, scikit-learn, Optuna, Streamlit, SimFin API
 
 ---
 
@@ -193,8 +193,4 @@ This project is developed for **educational and research purposes only**. The si
 
 ## Authors
 
-- Nicolás Higuera
-- Gilles Hamers
-- Madelyn Ehni
-- Salah Mneimne
-- Alberto Cabezudo
+Nicolás Higuera, Gilles Hamers, Madelyn Ehni, Salah Mneimne, Alberto Cabezudo
