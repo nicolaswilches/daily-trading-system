@@ -32,7 +32,9 @@ class PySimFin:
         self.last_call_time = time.time()
 
     def get_share_prices(self, ticker):
-        """Fetches daily share prices for a specific ticker (V3 Compact)."""
+        """
+        Fetches daily share prices for a specific ticker (V3 Compact).
+        """
         self._rate_limit()
         print(f"API: Fetching live prices for {ticker} (V3)...")
         

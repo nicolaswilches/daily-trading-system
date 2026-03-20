@@ -9,7 +9,7 @@ def debug_tickers():
     tickers = ["GOOGL", "META", "AAPL"] # AAPL as control
     url = "https://backend.simfin.com/api/v3/companies/prices/compact"
     headers = {"Authorization": API_KEY}
-    
+
     for ticker in tickers:
         print(f"\n--- Testing Ticker: {ticker} ---")
         r = requests.get(url, params={"ticker": ticker}, headers=headers)

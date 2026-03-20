@@ -7,13 +7,13 @@ API_KEY = os.getenv("SIMFIN_API_KEY")
 
 def test_new_auth():
     print(f"API Key: {API_KEY[:3]}...")
-    
+
     # 1. Test v1 with Direct Key (Doc suggestion)
     print("\nTest 1: v1 with Direct Key header")
     url_v1 = "https://backend.simfin.com/api/v1/info/share-prices"
     r1 = requests.get(url_v1, params={"ticker": "AAPL", "start": "2025-01-01"}, headers={"Authorization": API_KEY})
     print(f"v1 Status: {r1.status_code}")
-    
+
     # 2. Test v3 with Direct Key (Doc suggestion)
     print("\nTest 2: v3 with Direct Key header")
     url_v3 = "https://backend.simfin.com/api/v3/companies/prices/compact"
