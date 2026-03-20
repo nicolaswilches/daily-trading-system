@@ -32,30 +32,50 @@ try:
     st.markdown("#### Data Pipeline")
 
     steps = [
-        (
-            "Step 1",
-            "Data Ingestion",
-            "Daily prices and quarterly fundamentals from SimFin API",
-        ),
-        (
-            "Step 2",
-            "Feature Engineering",
-            "70+ technical & fundamental features via Polars",
-        ),
-        ("Step 3", "Model Training", "LightGBM with Optuna Bayesian optimisation"),
-        ("Step 4", "Live Prediction", "Real-time inference on latest market data"),
-    ]
+    (
+        "Step 1",
+        "Data Ingestion",
+        "Daily prices and quarterly fundamentals from SimFin API",
+        ["SimFin API", "Python"],
+    ),
+    (
+        "Step 2",
+        "Feature Engineering",
+        "70+ technical & fundamental features via Polars",
+        ["Polars", "Python"],
+    ),
+    (
+        "Step 3",
+        "Model Training",
+        "LightGBM with Optuna Bayesian optimisation",
+        ["LightGBM", "Optuna"],
+    ),
+    (
+        "Step 4",
+        "Live Prediction",
+        "Real-time inference on latest market data",
+        ["Streamlit", "SimFin API"],
+    ),
+]
 
     # Use wider columns with smaller arrows for better card layout
     cols = st.columns([4, 0.5, 4, 0.5, 4, 0.5, 4])
-    for i, (num, title, desc) in enumerate(steps):
+    for i, (num, title, desc, badges) in enumerate(steps):
         with cols[i * 2]:
+            badges_html = "".join([
+                f'<span style="background-color: rgba(137, 180, 250, 0.15); '
+                f'color: #89b4fa; border: 1px solid rgba(137, 180, 250, 0.3); '
+                f'border-radius: 20px; padding: 2px 10px; font-size: 0.75rem; '
+                f'margin-right: 4px;">{badge}</span>'
+                for badge in badges
+            ])
             st.markdown(
                 f"""
                 <div class="pipeline-step">
                     <div class="step-num">{num}</div>
                     <div class="step-title">{title}</div>
                     <div class="step-desc">{desc}</div>
+                    <div style="margin-top: 0.75rem;">{badges_html}</div>
                 </div>
                 """,
                 unsafe_allow_html=True,

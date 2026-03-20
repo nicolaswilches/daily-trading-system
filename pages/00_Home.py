@@ -17,50 +17,26 @@ st.markdown("#### What This System Does")
 
 c1, c2, c3 = st.columns(3)
 
-with c1:
-    st.markdown(
-        """
-        <div class="feature-card">
-            <h4>Predictive Analysis</h4>
-            <p>
-                LightGBM classification and regression models, tuned with
-                Bayesian optimisation, predict whether a stock's price will
-                rise and estimate the expected magnitude of the move.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+features = [
+    ("📊", "Predictive Analysis", "#007AFF", "LightGBM classification and regression models, tuned with Bayesian optimisation, predict whether a stock's price will rise and estimate the expected magnitude of the move."),
+    ("⚡", "Real-Time Market Data", "#34C759", "Live price feeds from the SimFin API are processed through the same feature-engineering pipeline used during training, delivering up-to-date trading signals on demand."),
+    ("🔁", "Backtesting Engine", "#FF9500", "A historical simulation evaluates the strategy against a buy-and-hold benchmark, reporting return, win rate, drawdown, and a full equity curve."),
+]
 
-with c2:
-    st.markdown(
-        """
-        <div class="feature-card">
-            <h4>Real-Time Market Data</h4>
-            <p>
-                Live price feeds from the SimFin API are processed through
-                the same feature-engineering pipeline used during training,
-                delivering up-to-date trading signals on demand.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-with c3:
-    st.markdown(
-        """
-        <div class="feature-card">
-            <h4>Backtesting Engine</h4>
-            <p>
-                A historical simulation evaluates the strategy against a
-                buy-and-hold benchmark, reporting return, win rate,
-                drawdown, and a full equity curve.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+for col, (icon, title, color, text) in zip([c1, c2, c3], features):
+    with col:
+        st.markdown(
+            f"""
+            <div class="feature-card" style="border-top: 3px solid {color};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h4 style="color: {color}; margin: 0;">{title}</h4>
+                    <div style="font-size: 2rem;">{icon}</div>
+                </div>
+                <p>{text}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ── System Objectives ─────────────────────────────────────────────────
@@ -125,16 +101,16 @@ st.markdown(
 
 # Professional initial-based avatars with distinct colors
 team_members = [
-    ("Nicolas Wilches", "Lead Data Scientist", "#007AFF"),
-    ("Madelyn Ehni", "Data Engineer", "#34C759"),
-    ("Salah Mneimne", "ML Engineer", "#FF9500"),
-    ("Gilles Hamers", "Quantitative Analyst", "#AF52DE"),
-    ("Alberto Cabezudo", "Software Engineer", "#FF2D92"),
+    ("Nicolas Wilches", "Lead Data Scientist", "#007AFF", "https://linkedin.com/in/nicolaswilches"),
+    ("Madelyn Ehni", "Data Engineer", "#34C759", "https://linkedin.com/in/madelyn-ehni"),
+    ("Salah Mneimne", "ML Engineer", "#FF9500", "https://linkedin.com/in/salahmneimne"),
+    ("Gilles Hamers", "Quantitative Analyst", "#AF52DE", "https://linkedin.com/in/gillesham"),
+    ("Alberto Cabezudo", "Software Engineer", "#FF2D92", "https://linkedin.com/in/albertocabezudo"),
 ]
 
 team_cols = st.columns(5)
 
-for col, (name, role, color) in zip(team_cols, team_members):
+for col, (name, role, color, linkedin) in zip(team_cols, team_members):
     with col:
         initials = "".join([n[0] for n in name.split()]).upper()
         st.markdown(
@@ -145,6 +121,10 @@ for col, (name, role, color) in zip(team_cols, team_members):
                 </div>
                 <div class="member-name">{name}</div>
                 <div class="member-role">{role}</div>
+                <a href="{linkedin}" target="_blank" style="text-decoration: none;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" 
+                         width="20" style="margin-top: 8px; opacity: 0.8;"/>
+                </a>
             </div>
             """,
             unsafe_allow_html=True,
@@ -155,10 +135,23 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.markdown('<div class="home-section">', unsafe_allow_html=True)
 st.markdown("#### Supported Assets")
 
-# Removed GOOG and META as requested
 tickers = ["AAPL", "MSFT", "AMZN", "TSLA", "NVDA"]
-chips_html = "".join(f'<span class="ticker-chip">{t}</span>' for t in tickers)
-st.markdown(chips_html, unsafe_allow_html=True)
+
+cols = st.columns(len(tickers))
+for col, ticker in zip(cols, tickers):
+    with col:
+        st.markdown(
+            f"""
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <img src="https://assets.parqet.com/logos/symbol/{ticker}?format=png" 
+                     width="50" height="50" 
+                     style="border-radius: 12px; object-fit: contain;"/>
+                <span class="ticker-chip">{ticker}</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
 st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown(
