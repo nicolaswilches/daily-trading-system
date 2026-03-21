@@ -19,6 +19,10 @@ TICKER_INFO = {
 tickers = ["AAPL", "MSFT", "AMZN", "TSLA", "NVDA"]
 selected_ticker = st.sidebar.radio("Select Asset", tickers)
 
+st.sidebar.divider()
+st.sidebar.markdown("**Chart Parameters**")
+lookback = st.sidebar.slider("Lookback (trading days)", 30, 500, 100, step=10)
+
 if selected_ticker:
     with st.spinner(f"Analyzing {selected_ticker}..."):
         result = run_prediction(selected_ticker)
@@ -167,7 +171,7 @@ if selected_ticker:
 
             # Handle history data safely
             if hasattr(result["history"], "tail"):
-                hist = result["history"].tail(100).to_pandas()
+                hist = result["history"].tail(lookback).to_pandas()
             else:
                 st.error("Unable to load historical data for charting.")
                 st.stop()

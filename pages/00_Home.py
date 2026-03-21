@@ -45,50 +45,27 @@ st.markdown("#### System Objectives")
 
 obj1, obj2, obj3 = st.columns(3)
 
-with obj1:
-    st.markdown(
-        """
-        <div class="objective-card">
-            <h5>Predictive Accuracy</h5>
-            <p>
-                Utilise gradient-boosted models optimised for precision 
-                to identify high-probability directional moves with 
-                statistical confidence thresholds.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+objectives = [
+    ("🎯", "Predictive Accuracy", "#AF52DE", "Utilise gradient-boosted models optimised for precision to identify high-probability directional moves with statistical confidence thresholds."),
+    ("🔗", "Real-Time Integration", "#FF2D92", "Seamless connection to external market data ensures every prediction is based on the latest available information and market conditions."),
+    ("🔀", "Algorithmic Strategy", "#FF9500", "Convert statistical probabilities into concrete execution signals (BUY / HOLD / SELL) with clearly defined confidence thresholds."),
+]
 
-with obj2:
-    st.markdown(
-        """
-        <div class="objective-card">
-            <h5>Real-Time Integration</h5>
-            <p>
-                Seamless connection to external market data ensures 
-                every prediction is based on the latest available 
-                information and market conditions.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+for col, (icon, title, color, text) in zip([obj1, obj2, obj3], objectives):
+    with col:
+        st.markdown(
+            f"""
+            <div class="objective-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h5 style="color: {color}; margin: 0;">{title}</h5>
+                    <div style="font-size: 2rem;">{icon}</div>
+                </div>
+                <p>{text}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-with obj3:
-    st.markdown(
-        """
-        <div class="objective-card">
-            <h5>Algorithmic Strategy</h5>
-            <p>
-                Convert statistical probabilities into concrete execution 
-                signals (BUY / HOLD / SELL) with clearly defined 
-                confidence thresholds.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Development Team ──────────────────────────────────────────────────
