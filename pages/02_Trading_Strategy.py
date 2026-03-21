@@ -8,9 +8,6 @@ from src.styles import apply_custom_style, MOCHA, get_plotly_template
 
 apply_custom_style()
 
-st.title("Algorithmic Trading Strategy")
-st.markdown("Performance evaluation of the model-driven execution engine.")
-
 # ── Sidebar Controls ──────────────────────────────────────────────────
 tickers = ["AAPL", "MSFT", "AMZN", "TSLA", "NVDA"]
 selected_ticker = st.sidebar.radio("Select Asset for Backtest", tickers)
@@ -27,6 +24,23 @@ initial_investment = st.sidebar.number_input(
 )
 buy_threshold = st.sidebar.slider("Buy threshold", 0.50, 0.70, 0.55, step=0.01)
 sell_threshold = st.sidebar.slider("Sell threshold", 0.30, 0.50, 0.45, step=0.01)
+
+# ── Header ────────────────────────────────────────────────────────────
+title_col, logo_col = st.columns([8, 1])
+
+with title_col:
+    st.title("Algorithmic Trading Strategy")
+    st.markdown("Performance evaluation of the model-driven execution engine.")
+
+with logo_col:
+    st.markdown(
+        f"""
+        <img src="https://assets.parqet.com/logos/symbol/{selected_ticker}?format=png"
+             width="70" height="70"
+             style="border-radius: 12px; object-fit: contain; margin-top: 1rem;"/>
+        """,
+        unsafe_allow_html=True,
+    )
 
 try:
     with st.spinner("Running backtest..."):

@@ -8,11 +8,11 @@ apply_custom_style()
 
 # Company info
 TICKER_INFO = {
-    "AAPL": {"name": "Apple Inc.", "logo": "assets/logos/AAPL.png"},
-    "MSFT": {"name": "Microsoft Corporation", "logo": "assets/logos/MSFT.png"},
-    "AMZN": {"name": "Amazon.com Inc.", "logo": "assets/logos/AMZN.png"},
-    "TSLA": {"name": "Tesla Inc.", "logo": "assets/logos/TSLA.png"},
-    "NVDA": {"name": "NVIDIA Corporation", "logo": "assets/logos/NVDA.png"}
+    "AAPL": {"name": "Apple Inc."},
+    "MSFT": {"name": "Microsoft Corporation"},
+    "AMZN": {"name": "Amazon.com Inc."},
+    "TSLA": {"name": "Tesla Inc."},
+    "NVDA": {"name": "NVIDIA Corporation"},
 }
 
 # ── Sidebar ───────────────────────────────────────────────────────────
@@ -44,9 +44,14 @@ if selected_ticker:
                 st.caption(f"Last updated: {result['last_updated']}")
 
             with col_right:
-                logo_path = company_info.get("logo", "")
-                if logo_path:
-                    st.image(logo_path, width=70)
+                st.markdown(
+                    f"""
+                    <img src="https://assets.parqet.com/logos/symbol/{selected_ticker}?format=png"
+                        width="70" height="70"
+                        style="border-radius: 12px; object-fit: contain;"/>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
             # ── Square KPI Cards with Color Highlighting ─────────
             k1, k2, k3, k4, k5, k6 = st.columns(6)
