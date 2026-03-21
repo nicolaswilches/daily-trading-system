@@ -12,12 +12,12 @@ TICKER_INFO = {
     "MSFT": {"name": "Microsoft Corporation", "logo": "assets/logos/MSFT.png"},
     "AMZN": {"name": "Amazon.com Inc.", "logo": "assets/logos/AMZN.png"},
     "TSLA": {"name": "Tesla Inc.", "logo": "assets/logos/TSLA.png"},
-    "NVDA": {"name": "NVIDIA Corporation", "logo": "assets/logos/NVDA.png"},
+    "NVDA": {"name": "NVIDIA Corporation", "logo": "assets/logos/NVDA.png"}
 }
 
 # ── Sidebar ───────────────────────────────────────────────────────────
 tickers = ["AAPL", "MSFT", "AMZN", "TSLA", "NVDA"]
-selected_ticker = st.sidebar.selectbox("Select Asset", tickers)
+selected_ticker = st.sidebar.radio("Select Asset", tickers)
 
 if selected_ticker:
     with st.spinner(f"Analyzing {selected_ticker}..."):

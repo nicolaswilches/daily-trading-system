@@ -12,8 +12,8 @@ st.title("Algorithmic Trading Strategy")
 st.markdown("Performance evaluation of the model-driven execution engine.")
 
 # ── Sidebar Controls ──────────────────────────────────────────────────
-tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META"]
-selected_ticker = st.sidebar.selectbox("Select Asset for Backtest", tickers)
+tickers = ["AAPL", "MSFT", "AMZN", "TSLA", "NVDA"]
+selected_ticker = st.sidebar.radio("Select Asset for Backtest", tickers)
 
 st.sidebar.divider()
 st.sidebar.markdown("**Backtest Parameters**")
