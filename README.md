@@ -5,7 +5,7 @@
 ![LightGBM](https://img.shields.io/badge/LightGBM-gradient%20boosting-green)
 ![Streamlit](https://img.shields.io/badge/Streamlit-dashboard-red?logo=streamlit)
 
-A quantitative trading pipeline that forecasts next-day stock price direction and magnitude for major US equities. Combines a dual-objective LightGBM framework (classification + regression) with a live Streamlit dashboard for real-time signal generation and strategy backtesting.
+A quantitative trading pipeline that forecasts next-day stock price direction and magnitude for major US equities. Combines two LightGBM models (classification + regression) with a live Streamlit dashboard for real-time signal generation and strategy backtesting.
 
 ---
 
@@ -182,12 +182,6 @@ Two LightGBM models are trained independently, each tuned with 30 Optuna trials:
 - **Provider:** [SimFin](https://simfin.com/) — free-tier API (daily prices + quarterly fundamentals)
 - **Coverage:** 5 years of historical data
 - **Tickers:** AAPL, MSFT, AMZN, TSLA, NVDA
-
----
-
-## Data Sources
-
-Link to the deployed web application: https://nicolaswilches-daily-trading-system-main-2ez8iq.streamlit.app/
 
 ---
 
