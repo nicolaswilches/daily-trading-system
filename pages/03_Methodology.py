@@ -37,30 +37,33 @@ try:
         "Data Ingestion",
         "Daily prices and quarterly fundamentals from SimFin API",
         ["SimFin API", "Python"],
+        "#007AFF",
     ),
     (
         "Step 2",
         "Feature Engineering",
         "70+ technical & fundamental features via Polars",
         ["Polars", "Python"],
+        "#34C759",
     ),
     (
         "Step 3",
         "Model Training",
         "LightGBM with Optuna Bayesian optimisation",
         ["LightGBM", "Optuna"],
+        "#AF52DE",
     ),
     (
         "Step 4",
         "Live Prediction",
         "Real-time inference on latest market data",
         ["Streamlit", "SimFin API"],
+        "#FF9500",
     ),
 ]
 
-    # Use wider columns with smaller arrows for better card layout
     cols = st.columns([4, 0.5, 4, 0.5, 4, 0.5, 4])
-    for i, (num, title, desc, badges) in enumerate(steps):
+    for i, (num, title, desc, badges, color) in enumerate(steps):
         with cols[i * 2]:
             badges_html = "".join([
                 f'<span style="background-color: rgba(137, 180, 250, 0.15); '
@@ -71,8 +74,8 @@ try:
             ])
             st.markdown(
                 f"""
-                <div class="pipeline-step">
-                    <div class="step-num">{num}</div>
+                <div class="pipeline-step" style="border-top: 3px solid {color};">
+                    <div class="step-num" style="color: {color};">{num}</div>
                     <div class="step-title">{title}</div>
                     <div class="step-desc">{desc}</div>
                     <div style="margin-top: 0.75rem;">{badges_html}</div>
@@ -83,7 +86,7 @@ try:
         if i < len(steps) - 1:
             with cols[i * 2 + 1]:
                 st.markdown(
-                    '<div class="pipeline-arrow">→</div>',
+                    f'<div class="pipeline-arrow" style="color: {color}; font-size: 1.5rem;">→</div>',
                     unsafe_allow_html=True,
                 )
 
