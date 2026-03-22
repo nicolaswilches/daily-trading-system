@@ -1,4 +1,4 @@
-# Automated Daily Trading System
+# [Automated Daily Trading System](https://nicolaswilches-daily-trading-system-main-2ez8iq.streamlit.app/)
 
 ![Python](https://img.shields.io/badge/Python-3.12+-blue?logo=python&logoColor=white)
 ![uv](https://img.shields.io/badge/uv-package%20manager-blueviolet)
