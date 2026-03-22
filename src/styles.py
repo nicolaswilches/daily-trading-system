@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.io as pio
 
-# ── Catppuccin Mocha Palette ─────────────────────────────────────────
+# Catppuccin Mocha Palette
 MOCHA = {
     "rosewater": "#f5e0dc",
     "flamingo": "#f2cdcd",

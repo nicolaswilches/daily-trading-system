@@ -3,7 +3,7 @@ from src.styles import apply_custom_style, MOCHA
 
 apply_custom_style()
 
-# ── Hero ──────────────────────────────────────────────────────────────
+# Hero 
 st.title("Automated Daily Trading System")
 st.markdown(
     "A quantitative platform that forecasts short-term equity movements "
@@ -11,7 +11,7 @@ st.markdown(
     "corporate fundamentals."
 )
 
-# ── Core Functionalities ─────────────────────────────────────────────
+# Core Functionalities 
 st.markdown('<div class="home-section">', unsafe_allow_html=True)
 st.markdown("#### What This System Does")
 

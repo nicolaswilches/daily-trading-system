@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 class PySimFin:
     """
-    A professional wrapper for the SimFin API v3 with built-in rate-limiting 
+    A wrapper for the SimFin API v3 with built-in rate-limiting 
     and data formatting for Polars.
     """
     # Updated to V3
@@ -25,7 +25,9 @@ class PySimFin:
         self.last_call_time = 0
 
     def _rate_limit(self):
-        """Ensures we don't exceed 2 requests per second."""
+        """
+        Ensures we don't exceed 2 requests per second.
+        """
         elapsed = time.time() - self.last_call_time
         if elapsed < 0.6:  # 0.6s delay for safety
             time.sleep(0.6 - elapsed)

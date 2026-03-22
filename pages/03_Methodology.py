@@ -19,7 +19,8 @@ apply_custom_style()
 
 st.title("Methodology & Model Insights")
 st.markdown(
-    "Detailed breakdown of the pipeline's architecture, model performance, evaluation and interpretation."
+    "Detailed breakdown of the predictive engine, validation results, "
+    "and feature engineering hierarchy."
 )
 
 try:
@@ -31,35 +32,35 @@ try:
     st.markdown("#### Data Pipeline")
 
     steps = [
-    (
-        "Step 1",
-        "ETL",
-        "Daily prices and quarterly fundamentals from SimFin API",
-        ["SimFin API", "Polars"],
-        "#007AFF",
-    ),
-    (
-        "Step 2",
-        "Features",
-        "70+ technical & fundamental features via Polars",
-        ["Polars", "Python"],
-        "#34C759",
-    ),
-    (
-        "Step 3",
-        "Model Training",
-        "LightGBM with Optuna Bayesian optimization",
-        ["LightGBM", "Optuna"],
-        "#AF52DE",
-    ),
-    (
-        "Step 4",
-        "Live Prediction",
-        "Real-time inference on latest market data",
-        ["Streamlit", "SimFin API"],
-        "#FF9500",
-    ),
-]
+        (
+            "Step 1",
+            "Data Ingestion",
+            "Daily prices and quarterly fundamentals from SimFin API",
+            ["SimFin API"],
+            "#007AFF",
+        ),
+        (
+            "Step 2",
+            "Feature Engineering",
+            "70+ technical & fundamental features via Polars",
+            ["Polars"],
+            "#34C759",
+        ),
+        (
+            "Step 3",
+            "Model Training",
+            "LightGBM with Optuna Bayesian optimization",
+            ["LightGBM", "Optuna"],
+            "#AF52DE",
+        ),
+        (
+            "Step 4",
+            "Live Prediction",
+            "Real-time inference on latest market data",
+            ["Streamlit", "SimFin API"],
+            "#FF9500",
+        ),
+    ]
 
     cols = st.columns([4, 0.5, 4, 0.5, 4, 0.5, 4])
     for i, (num, title, desc, badges, color) in enumerate(steps):
@@ -146,7 +147,7 @@ try:
                 y=cm_labels,
                 text=cm,
                 texttemplate="%{text}",
-                textfont=dict(size=16, color=MOCHA["base"]),
+                textfont=dict(size=16, color=MOCHA["text"]),
                 colorscale=[
                     [0, MOCHA["surface1"]],
                     [1, MOCHA["blue"]],
