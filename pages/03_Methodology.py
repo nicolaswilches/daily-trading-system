@@ -28,39 +28,39 @@ try:
     features = joblib.load("models/features_list.joblib")
     layout = get_plotly_template()
 
-    # ── Pipeline Overview ─────────────────────────────────────────
+    # Pipeline Overview
     st.markdown("#### Data Pipeline")
 
     steps = [
-    (
-        "Step 1",
-        "Data Ingestion",
-        "Daily prices and quarterly fundamentals from SimFin API",
-        ["SimFin API", "Python"],
-        "#007AFF",
-    ),
-    (
-        "Step 2",
-        "Feature Engineering",
-        "70+ technical & fundamental features via Polars",
-        ["Polars", "Python"],
-        "#34C759",
-    ),
-    (
-        "Step 3",
-        "Model Training",
-        "LightGBM with Optuna Bayesian optimisation",
-        ["LightGBM", "Optuna"],
-        "#AF52DE",
-    ),
-    (
-        "Step 4",
-        "Live Prediction",
-        "Real-time inference on latest market data",
-        ["Streamlit", "SimFin API"],
-        "#FF9500",
-    ),
-]
+        (
+            "Step 1",
+            "Data Ingestion",
+            "Daily prices and quarterly fundamentals from SimFin API",
+            ["SimFin API"],
+            "#007AFF",
+        ),
+        (
+            "Step 2",
+            "Feature Engineering",
+            "70+ technical & fundamental features via Polars",
+            ["Polars"],
+            "#34C759",
+        ),
+        (
+            "Step 3",
+            "Model Training",
+            "LightGBM with Optuna Bayesian optimization",
+            ["LightGBM", "Optuna"],
+            "#AF52DE",
+        ),
+        (
+            "Step 4",
+            "Live Prediction",
+            "Real-time inference on latest market data",
+            ["Streamlit", "SimFin API"],
+            "#FF9500",
+        ),
+    ]
 
     cols = st.columns([4, 0.5, 4, 0.5, 4, 0.5, 4])
     for i, (num, title, desc, badges, color) in enumerate(steps):
@@ -74,7 +74,7 @@ try:
             ])
             st.markdown(
                 f"""
-                <div class="pipeline-step" style="border-top: 3px solid {color};">
+                <div class="pipeline-step" style="border-top: 2px solid {color};">
                     <div class="step-num" style="color: {color};">{num}</div>
                     <div class="step-title">{title}</div>
                     <div class="step-desc">{desc}</div>
@@ -92,7 +92,7 @@ try:
 
     st.divider()
 
-    # ── Model Performance Metrics ─────────────────────────────────
+    # Model Performance Metrics 
     st.markdown("#### Model Performance")
 
     try:
@@ -135,7 +135,7 @@ try:
                     unsafe_allow_html=True,
                 )
 
-        # ── Confusion Matrix ──────────────────────────────────
+        # Confusion Matrix 
         st.markdown("##### Confusion Matrix")
         cm = confusion_matrix(y_test, y_pred)
         cm_labels = ["Down (0)", "Up (1)"]
@@ -147,7 +147,7 @@ try:
                 y=cm_labels,
                 text=cm,
                 texttemplate="%{text}",
-                textfont=dict(size=16, color=MOCHA["base"]),
+                textfont=dict(size=16, color=MOCHA["text"]),
                 colorscale=[
                     [0, MOCHA["surface1"]],
                     [1, MOCHA["blue"]],
@@ -170,7 +170,7 @@ try:
 
     st.divider()
 
-    # ── Feature Importance ────────────────────────────────────────
+    # Feature Importance 
     st.markdown("#### Feature Importance")
     st.markdown("Information-gain attribution across the primary feature set.")
 
@@ -195,7 +195,7 @@ try:
     )
     st.plotly_chart(fig_imp, use_container_width=True)
 
-    # ── Feature Descriptions ──────────────────────────────────────
+    # Feature Descriptions 
     with st.expander("Feature Descriptions"):
         descriptions = {
             "Log_Return_1d": "Logarithmic daily return — captures the relative price change between consecutive sessions.",
@@ -218,7 +218,7 @@ try:
 
     st.divider()
 
-    # ── Methodology Details ───────────────────────────────────────
+    # Methodology Details 
     st.markdown("#### Technical Details")
 
     col1, col2 = st.columns(2)
@@ -226,14 +226,14 @@ try:
     with col1:
         st.markdown("##### Data Sources & Processing")
         st.markdown(
-            f"""
-            - **Price Data** — 5 years of daily OHLCV from SimFin for 7 US
+            """
+            - **Price Data:** 5 years of daily OHLCV from SimFin for 7 US
               large-cap equities.
-            - **Fundamentals** — Quarterly income statements and balance
+            - **Fundamentals:** Quarterly income statements and balance
               sheets joined with point-in-time alignment.
-            - **Stationarity** — Log-return transformations ensure the target
+            - **Stationarity:** Log-return transformations ensure the target
               series is stationary.
-            - **Compute** — Polars engine for high-throughput feature
+            - **Compute:** Polars engine for high-throughput feature
               calculation on time-series data.
             """
         )
@@ -241,15 +241,15 @@ try:
     with col2:
         st.markdown("##### Model & Optimisation")
         st.markdown(
-            f"""
-            - **Framework** — LightGBM gradient boosting with leaf-wise
+            """
+            - **Framework:** LightGBM gradient boosting with leaf-wise
               tree growth (classifier + regressor).
-            - **Tuning** — Optuna Bayesian search over 30 iterations per
+            - **Tuning:** Optuna Bayesian search over 30 iterations per
               objective, optimising precision (classifier) and RMSE
               (regressor).
-            - **Validation** — 5-fold `TimeSeriesSplit` to prevent data
+            - **Validation:** 5-fold `TimeSeriesSplit` to prevent data
               leakage and evaluate true out-of-sample performance.
-            - **Targets** — Binary direction label (classification) and
+            - **Targets:** Binary direction label (classification) and
               next-day log return (regression).
             """
         )

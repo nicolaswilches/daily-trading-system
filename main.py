@@ -1,6 +1,6 @@
 import streamlit as st
 
-# ── Entry Point ───────────────────────────────────────────────────────
+# Entry Point
 # Streamlit's multi-page app uses the pages/ directory automatically.
 # This file sets global config and redirects to the Home page.
 
