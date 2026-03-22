@@ -24,3 +24,8 @@ dependencies = [
     "streamlit>=1.40.0",
     "xgboost>=3.2.0",
 ]
+
+[dependency-groups]
+dev = [
+    "nbconvert>=7.17.0",
+]
