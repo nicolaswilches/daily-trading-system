@@ -417,7 +417,7 @@ def apply_custom_style():
             height: 180px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             min-width: 200px;
         }}
 
