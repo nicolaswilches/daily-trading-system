@@ -227,7 +227,7 @@ try:
         st.markdown("##### Data Sources & Processing")
         st.markdown(
             """
-            - **Price Data:** 5 years of daily OHLCV from SimFin for 7 US
+            - **Price Data:** 5 years of daily OHLCV from SimFin for 5 US
               large-cap equities.
             - **Fundamentals:** Quarterly income statements and balance
               sheets joined with point-in-time alignment.
