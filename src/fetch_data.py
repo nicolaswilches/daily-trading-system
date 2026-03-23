@@ -4,7 +4,6 @@ import polars as pl
 import pandas as pd
 from dotenv import load_dotenv
 
-# --- MONKEYPATCH FOR SIMFIN/PANDAS COMPATIBILITY ---
 # Newer pandas deprecated 'date_parser' in favor of 'date_format' or 'parse_dates'
 # We temporarily wrap read_csv to handle the old argument used by simfin
 original_read_csv = pd.read_csv

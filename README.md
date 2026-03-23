@@ -16,7 +16,7 @@ The system is structured as two cooperating modules:
 1. **Offline Pipeline:** Ingests 5 years of historical OHLCV and corporate fundamentals from SimFin, engineers 70+ features with Polars, and trains two LightGBM models optimized via Optuna Bayesian search.
 2. **Live Dashboard:** A Streamlit application that fetches real-time data, runs inference, displays trading signals, and simulates historical strategy performance against a buy-and-hold benchmark.
 
-**Core stack:** Polars, scikit-learn, scikit-learn, Optuna, Streamlit, SimFin API
+**Core stack:** Polars, scikit-learn, Optuna, Streamlit, SimFin API
 
 ---
 
@@ -47,24 +47,21 @@ Streamlit Dashboard  (main.py + pages/)
 
 ```text
 daily-trading-system/
-├── .env.example              # Required environment variables template
 ├── .streamlit/
 │   └── config.toml           # Streamlit theme (Catppuccin Mocha)
-├── assets/
-│   └── logos/                # Company logo assets (PNG/SVG)
 ├── data/
 │   ├── raw/                  # Ingested CSVs and Parquet files (gitignored)
 │   └── processed/
 │       └── features.parquet  # Engineered feature set
 ├── docs/
-│   ├── AI_USAGE_LOG.md       # AI collaboration log
-│   └── executive_summary.md  # Project vision and approach
+│   ├── ai_usage_log.md       # AI collaboration log
+│   └── executive_summary.md  # Project vision and approach (also as .pdf)
 ├── models/
 │   ├── classifier.joblib     # Trained LightGBM classifier
 │   ├── regressor.joblib      # Trained LightGBM regressor
 │   └── features_list.joblib  # Feature column order for inference
 ├── notebooks/
-│   ├── etl_pipeline_v1.ipynb     # ETL prototyping
+│   ├── etl.ipynb                 # ETL prototyping
 │   └── model_exploration.ipynb   # Model experimentation
 ├── pages/
 │   ├── 00_Home.py            # Landing page
@@ -94,12 +91,11 @@ daily-trading-system/
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url>
+git clone https://github.com/nicolaswilches/daily-trading-system.git
 cd daily-trading-system
 
-# 2. Configure environment
-cp .env.example .env
-# Edit .env and set your SIMFIN_API_KEY
+# 2. Configure environment — create a .env file with your SimFin API key
+echo "SIMFIN_API_KEY=your_api_key_here" > .env
 
 # 3. Install dependencies
 uv sync
