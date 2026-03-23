@@ -70,7 +70,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ── Development Team ──────────────────────────────────────────────────
 st.markdown('<div class="home-section">', unsafe_allow_html=True)
-st.markdown("#### Development Team — 8 Labs")
+st.markdown("#### Development Team")
 st.markdown(
     f'<p style="color: {MOCHA["subtext1"]}; font-size: 0.95rem; margin-bottom: 1.5rem;">Meet the team:</p>',
     unsafe_allow_html=True,

@@ -175,7 +175,7 @@ Two LightGBM models are trained independently, each tuned with 30 Optuna trials:
 
 ## Data Sources
 
-- **Provider:** [SimFin](https://simfin.com/) — free-tier API (daily prices + quarterly fundamentals)
+- **Provider:** [SimFin](https://simfin.com/), free-tier API (daily prices + quarterly fundamentals)
 - **Coverage:** 5 years of historical data
 - **Tickers:** AAPL, MSFT, AMZN, TSLA, NVDA
 
