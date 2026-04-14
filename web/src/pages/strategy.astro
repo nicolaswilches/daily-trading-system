@@ -1,0 +1,267 @@
+---
+import Layout from "../layouts/Layout.astro";
+import StatTile from "../components/StatTile.astro";
+import Chart from "../components/Chart.astro";
+import { loadBacktest } from "../lib/data";
+
+const backtest = loadBacktest();
+const defaultTicker = backtest.tickers[0];
+const defaultBuy = 0.55;
+const defaultSell = 0.45;
+---
+
+<Layout title="Strategy">
+  <h1 class="text-3xl font-semibold tracking-tight mb-2">Backtest</h1>
+  <p class="text-sm mb-8" style="color: var(--text-muted);">
+    Equity curve vs buy-and-hold over the out-of-sample window (cutoff{" "}
+    <span class="num">{backtest.cutoff_date}</span>). Pre-computed grid over
+    buy/sell thresholds — no in-browser retraining.
+  </p>
+
+  <div
+    class="card p-4 mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 items-center"
+  >
+    <label class="flex flex-col gap-1 text-sm">
+      <span style="color: var(--text-muted);">Ticker</span>
+      <select
+        id="ticker-select"
+        class="bg-transparent border rounded-md px-3 py-2 num"
+        style="border-color: var(--border);"
+      >
+        {backtest.tickers.map((t) => <option value={t}>{t}</option>)}
+      </select>
+    </label>
+    <label class="flex flex-col gap-1 text-sm">
+      <span style="color: var(--text-muted);">Buy threshold</span>
+      <select
+        id="buy-select"
+        class="bg-transparent border rounded-md px-3 py-2 num"
+        style="border-color: var(--border);"
+      >
+        {
+          backtest.buy_thresholds.map((v) => (
+            <option value={v.toFixed(2)} selected={v === defaultBuy}>
+              {v.toFixed(2)}
+            </option>
+          ))
+        }
+      </select>
+    </label>
+    <label class="flex flex-col gap-1 text-sm">
+      <span style="color: var(--text-muted);">Sell threshold</span>
+      <select
+        id="sell-select"
+        class="bg-transparent border rounded-md px-3 py-2 num"
+        style="border-color: var(--border);"
+      >
+        {
+          backtest.sell_thresholds.map((v) => (
+            <option value={v.toFixed(2)} selected={v === defaultSell}>
+              {v.toFixed(2)}
+            </option>
+          ))
+        }
+      </select>
+    </label>
+  </div>
+
+  <div id="metrics" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+    <StatTile label="Strategy return" value="—" />
+    <StatTile label="Benchmark" value="—" />
+    <StatTile label="Max drawdown" value="—" />
+    <StatTile label="Win rate" value="—" />
+    <StatTile label="Trades" value="—" />
+  </div>
+
+  <Chart id="equity-chart" height="400px" />
+  <div class="mt-6">
+    <Chart id="drawdown-chart" height="220px" />
+  </div>
+
+  <script define:vars={{ backtest, defaultTicker, defaultBuy, defaultSell }}>
+    window.__backtest = backtest;
+    window.__defaultTicker = defaultTicker;
+    window.__defaultBuy = defaultBuy;
+    window.__defaultSell = defaultSell;
+  </script>
+
+  <script>
+    import * as echarts from "echarts";
+    import { chartPalette, getTheme } from "../lib/charts";
+
+    const bt: any = (window as any).__backtest;
+    let ticker: string = (window as any).__defaultTicker;
+    let buy: number = (window as any).__defaultBuy;
+    let sell: number = (window as any).__defaultSell;
+
+    let equityChart: echarts.ECharts | null = null;
+    let drawdownChart: echarts.ECharts | null = null;
+
+    function currentRun() {
+      const key = `${buy.toFixed(2)}_${sell.toFixed(2)}`;
+      return bt.grid[ticker]?.[key];
+    }
+
+    function renderMetrics(run: any) {
+      const container = document.getElementById("metrics");
+      if (!container) return;
+      const m = run.metrics;
+      const fmt = (n: number, suffix = "") =>
+        `${n >= 0 ? "" : ""}${n.toFixed(1)}${suffix}`;
+      const tiles = [
+        {
+          label: "Strategy return",
+          value: `${m.strategy_return_pct >= 0 ? "+" : ""}${m.strategy_return_pct.toFixed(1)}%`,
+          tone: m.strategy_return_pct >= 0 ? "positive" : "negative",
+        },
+        { label: "Benchmark", value: `${m.benchmark_return_pct >= 0 ? "+" : ""}${m.benchmark_return_pct.toFixed(1)}%`, tone: "neutral" },
+        { label: "Max drawdown", value: `${m.max_drawdown_pct.toFixed(1)}%`, tone: "negative" },
+        { label: "Win rate", value: `${m.win_rate_pct.toFixed(1)}%`, tone: "neutral" },
+        { label: "Trades", value: String(m.num_trades), tone: "neutral" },
+      ];
+      container.innerHTML = tiles
+        .map((t) => {
+          const toneClass =
+            t.tone === "positive"
+              ? "signal-buy"
+              : t.tone === "negative"
+                ? "signal-sell"
+                : "";
+          return `<div class="card px-4 py-3">
+            <div class="text-xs uppercase tracking-wide" style="color: var(--text-subtle);">${t.label}</div>
+            <div class="num text-2xl mt-1 ${toneClass}">${t.value}</div>
+          </div>`;
+        })
+        .join("");
+    }
+
+    function renderCharts(run: any) {
+      const pal = chartPalette(getTheme());
+      const eqEl = document.getElementById("equity-chart");
+      const ddEl = document.getElementById("drawdown-chart");
+      if (!eqEl || !ddEl) return;
+
+      if (!equityChart) equityChart = echarts.init(eqEl);
+      if (!drawdownChart) drawdownChart = echarts.init(ddEl);
+
+      equityChart.setOption(
+        {
+          textStyle: { color: pal.text, fontFamily: "Inter, system-ui, sans-serif" },
+          grid: { left: 50, right: 20, top: 40, bottom: 40, containLabel: true },
+          tooltip: {
+            trigger: "axis",
+            backgroundColor: pal.bg,
+            borderColor: pal.border,
+            textStyle: { color: pal.text },
+            axisPointer: { type: "cross", lineStyle: { color: pal.muted, type: "dashed" } },
+            valueFormatter: (v: any) => Number(v).toFixed(3),
+          },
+          legend: {
+            top: 4,
+            textStyle: { color: pal.textMuted, fontSize: 12 },
+          },
+          xAxis: {
+            type: "category",
+            data: run.dates,
+            axisLine: { lineStyle: { color: pal.border } },
+            axisLabel: { color: pal.textMuted, fontSize: 11 },
+          },
+          yAxis: {
+            type: "value",
+            scale: true,
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: { color: pal.textMuted, fontSize: 11 },
+            splitLine: { lineStyle: { color: pal.grid } },
+          },
+          series: [
+            {
+              name: "Strategy",
+              type: "line",
+              data: run.equity,
+              showSymbol: false,
+              lineStyle: { color: pal.accent, width: 2.5 },
+            },
+            {
+              name: "Buy & Hold",
+              type: "line",
+              data: run.benchmark,
+              showSymbol: false,
+              lineStyle: { color: pal.muted, width: 1.5, type: "dashed" },
+            },
+          ],
+        },
+        true,
+      );
+
+      drawdownChart.setOption(
+        {
+          grid: { left: 50, right: 20, top: 20, bottom: 30, containLabel: true },
+          tooltip: {
+            trigger: "axis",
+            backgroundColor: pal.bg,
+            borderColor: pal.border,
+            textStyle: { color: pal.text },
+            valueFormatter: (v: any) => `${Number(v).toFixed(2)}%`,
+          },
+          xAxis: {
+            type: "category",
+            data: run.dates,
+            axisLine: { lineStyle: { color: pal.border } },
+            axisLabel: { color: pal.textMuted, fontSize: 11 },
+          },
+          yAxis: {
+            type: "value",
+            axisLine: { show: false },
+            axisLabel: { color: pal.textMuted, fontSize: 11, formatter: "{value}%" },
+            splitLine: { lineStyle: { color: pal.grid } },
+          },
+          series: [
+            {
+              type: "line",
+              data: run.drawdown,
+              showSymbol: false,
+              lineStyle: { color: pal.danger, width: 1 },
+              areaStyle: { color: pal.danger + "33" },
+            },
+          ],
+        },
+        true,
+      );
+    }
+
+    function refresh() {
+      const run = currentRun();
+      if (!run) return;
+      renderMetrics(run);
+      renderCharts(run);
+    }
+
+    document.getElementById("ticker-select")?.addEventListener("change", (e) => {
+      ticker = (e.target as HTMLSelectElement).value;
+      refresh();
+    });
+    document.getElementById("buy-select")?.addEventListener("change", (e) => {
+      buy = parseFloat((e.target as HTMLSelectElement).value);
+      refresh();
+    });
+    document.getElementById("sell-select")?.addEventListener("change", (e) => {
+      sell = parseFloat((e.target as HTMLSelectElement).value);
+      refresh();
+    });
+
+    window.addEventListener("resize", () => {
+      equityChart?.resize();
+      drawdownChart?.resize();
+    });
+    document.addEventListener("themechange", () => {
+      equityChart?.dispose();
+      drawdownChart?.dispose();
+      equityChart = null;
+      drawdownChart = null;
+      refresh();
+    });
+
+    refresh();
+  </script>
+</Layout>

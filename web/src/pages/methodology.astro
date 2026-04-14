@@ -1,0 +1,163 @@
+---
+import Layout from "../layouts/Layout.astro";
+import StatTile from "../components/StatTile.astro";
+import Chart from "../components/Chart.astro";
+import { loadMethodology } from "../lib/data";
+
+const m = loadMethodology();
+---
+
+<Layout title="Methodology">
+  <h1 class="text-3xl font-semibold tracking-tight mb-2">Methodology</h1>
+  <p class="text-sm mb-10 max-w-2xl" style="color: var(--text-muted);">
+    Two LightGBM models trained independently with 30-trial Optuna Bayesian
+    search over hyperparameters. Strict chronological train/holdout split
+    prevents lookahead bias.
+  </p>
+
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+    <StatTile
+      label="CV precision"
+      value={(m.metrics.cv_precision * 100).toFixed(1) + "%"}
+      hint="5-fold TimeSeriesSplit on train"
+    />
+    <StatTile
+      label="Holdout precision"
+      value={(m.metrics.holdout_precision * 100).toFixed(1) + "%"}
+      hint="Strictly out-of-sample"
+    />
+    <StatTile
+      label="CV RMSE"
+      value={m.metrics.cv_rmse.toFixed(4)}
+      hint="Log-return"
+    />
+    <StatTile
+      label="Holdout RMSE"
+      value={m.metrics.holdout_rmse.toFixed(4)}
+    />
+  </section>
+
+  <section class="card p-6 mb-12">
+    <h2 class="text-lg font-semibold mb-4">Train / holdout split</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+      <div>
+        <div class="text-xs uppercase" style="color: var(--text-subtle);">
+          Cutoff date
+        </div>
+        <div class="num mt-1">{m.split.cutoff_date}</div>
+      </div>
+      <div>
+        <div class="text-xs uppercase" style="color: var(--text-subtle);">
+          Holdout fraction
+        </div>
+        <div class="num mt-1">
+          {(m.split.holdout_fraction * 100).toFixed(0)}%
+        </div>
+      </div>
+      <div>
+        <div class="text-xs uppercase" style="color: var(--text-subtle);">
+          Train rows
+        </div>
+        <div class="num mt-1">{m.split.train_rows.toLocaleString()}</div>
+      </div>
+      <div>
+        <div class="text-xs uppercase" style="color: var(--text-subtle);">
+          Holdout rows
+        </div>
+        <div class="num mt-1">{m.split.holdout_rows.toLocaleString()}</div>
+      </div>
+    </div>
+    <p class="mt-4 text-xs" style="color: var(--text-muted);">
+      Hyperparameter search and final model fitting occur only on rows before
+      the cutoff. All metrics reported on the holdout are true out-of-sample.
+    </p>
+  </section>
+
+  <section class="grid md:grid-cols-2 gap-8 mb-12">
+    <div>
+      <h2 class="text-lg font-semibold mb-4">
+        Top features · Classifier
+      </h2>
+      <Chart id="fi-clf" height="420px" />
+    </div>
+    <div>
+      <h2 class="text-lg font-semibold mb-4">
+        Top features · Regressor
+      </h2>
+      <Chart id="fi-reg" height="420px" />
+    </div>
+  </section>
+
+  <section class="card p-6">
+    <h2 class="text-lg font-semibold mb-3">Signal rules</h2>
+    <ul class="text-sm space-y-2" style="color: var(--text-muted);">
+      <li>
+        <strong class="text-[color:var(--text)]">BUY</strong> — classifier
+        <span class="num">prob_up &gt; 0.55</span>
+      </li>
+      <li>
+        <strong class="text-[color:var(--text)]">SELL</strong> — classifier
+        <span class="num">prob_up &lt; 0.45</span>
+      </li>
+      <li>
+        <strong class="text-[color:var(--text)]">HOLD</strong> — otherwise
+      </li>
+      <li>
+        <strong class="text-[color:var(--text)]">Target price</strong> —
+        <span class="num">current_price × exp(pred_log_return)</span>
+      </li>
+    </ul>
+  </section>
+
+  <script define:vars={{ clfFeatures: m.top_features_classifier, regFeatures: m.top_features_regressor }}>
+    window.__fi = { clfFeatures, regFeatures };
+  </script>
+
+  <script>
+    import { mountChart, chartPalette } from "../lib/charts";
+
+    const { clfFeatures, regFeatures } = (window as any).__fi;
+
+    function barOption(theme: any, items: any[], color: string) {
+      const pal = chartPalette(theme);
+      const sorted = [...items].reverse();
+      return {
+        grid: { left: 120, right: 20, top: 10, bottom: 30, containLabel: true },
+        tooltip: {
+          trigger: "axis",
+          backgroundColor: pal.bg,
+          borderColor: pal.border,
+          textStyle: { color: pal.text },
+          axisPointer: { type: "shadow" },
+        },
+        xAxis: {
+          type: "value",
+          axisLine: { show: false },
+          axisLabel: { color: pal.textMuted, fontSize: 11 },
+          splitLine: { lineStyle: { color: pal.grid } },
+        },
+        yAxis: {
+          type: "category",
+          data: sorted.map((f: any) => f.feature),
+          axisLine: { lineStyle: { color: pal.border } },
+          axisLabel: { color: pal.textMuted, fontSize: 11 },
+        },
+        series: [
+          {
+            type: "bar",
+            data: sorted.map((f: any) => f.importance),
+            itemStyle: { color },
+            barMaxWidth: 14,
+          },
+        ],
+      };
+    }
+
+    mountChart("fi-clf", (theme) =>
+      barOption(theme, clfFeatures, chartPalette(theme).accent),
+    );
+    mountChart("fi-reg", (theme) =>
+      barOption(theme, regFeatures, chartPalette(theme).success),
+    );
+  </script>
+</Layout>

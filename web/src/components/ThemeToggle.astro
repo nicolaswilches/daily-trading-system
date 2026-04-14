@@ -1,0 +1,55 @@
+---
+---
+
+<button
+  id="theme-toggle"
+  class="btn-ghost p-2 rounded-md"
+  aria-label="Toggle color theme"
+  type="button"
+>
+  <svg
+    class="w-5 h-5 block dark-hide"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path>
+  </svg>
+  <svg
+    class="w-5 h-5 hidden dark-show"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    viewBox="0 0 24 24"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path
+      stroke-linecap="round"
+      d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"
+    ></path>
+  </svg>
+</button>
+
+<style>
+  :global(html[data-theme="dark"]) .dark-hide {
+    display: none;
+  }
+  :global(html[data-theme="dark"]) .dark-show {
+    display: block;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById("theme-toggle");
+  btn?.addEventListener("click", () => {
+    const next =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("theme", next);
+    document.dispatchEvent(new CustomEvent("themechange", { detail: next }));
+  });
+</script>

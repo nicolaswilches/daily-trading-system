@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-04-14T21:34:47.750598+00:00",
+  "cutoff_date": "2024-05-14",
+  "split": {
+    "cutoff_date": "2024-05-14",
+    "holdout_fraction": 0.2,
+    "train_rows": 4980,
+    "holdout_rows": 1248
+  },
+  "metrics": {
+    "cv_precision": 0.545072986735896,
+    "cv_rmse": 0.02792334509980472,
+    "holdout_precision": 0.5324015247776366,
+    "holdout_rmse": 0.02658276079491385
+  },
+  "feature_count": 64,
+  "top_features_classifier": [
+    {
+      "feature": "Log_Return_1d",
+      "importance": 1356
+    },
+    {
+      "feature": "Volume",
+      "importance": 1132
+    },
+    {
+      "feature": "Dist_SMA_50",
+      "importance": 1069
+    },
+    {
+      "feature": "Dist_SMA_20",
+      "importance": 1053
+    },
+    {
+      "feature": "Vol_20",
+      "importance": 904
+    },
+    {
+      "feature": "ATR_14",
+      "importance": 897
+    },
+    {
+      "feature": "Dist_SMA_200",
+      "importance": 695
+    },
+    {
+      "feature": "RSI_Proxy",
+      "importance": 637
+    },
+    {
+      "feature": "Open",
+      "importance": 352
+    },
+    {
+      "feature": "Close",
+      "importance": 333
+    },
+    {
+      "feature": "Low",
+      "importance": 296
+    },
+    {
+      "feature": "Adj. Close",
+      "importance": 209
+    },
+    {
+      "feature": "High",
+      "importance": 206
+    },
+    {
+      "feature": "Non-Operating Income (Loss)",
+      "importance": 203
+    },
+    {
+      "feature": "Long Term Debt",
+      "importance": 148
+    }
+  ],
+  "top_features_regressor": [
+    {
+      "feature": "Log_Return_1d",
+      "importance": 61
+    },
+    {
+      "feature": "ATR_14",
+      "importance": 54
+    },
+    {
+      "feature": "Dist_SMA_200",
+      "importance": 49
+    },
+    {
+      "feature": "Volume",
+      "importance": 38
+    },
+    {
+      "feature": "Vol_20",
+      "importance": 35
+    },
+    {
+      "feature": "Dist_SMA_20",
+      "importance": 31
+    },
+    {
+      "feature": "Low",
+      "importance": 22
+    },
+    {
+      "feature": "Long Term Debt",
+      "importance": 21
+    },
+    {
+      "feature": "Shares (Basic)",
+      "importance": 18
+    },
+    {
+      "feature": "Revenue",
+      "importance": 18
+    },
+    {
+      "feature": "Dist_SMA_50",
+      "importance": 17
+    },
+    {
+      "feature": "Operating Expenses",
+      "importance": 16
+    },
+    {
+      "feature": "Selling, General & Administrative",
+      "importance": 16
+    },
+    {
+      "feature": "Research & Development",
+      "importance": 16
+    },
+    {
+      "feature": "Total Noncurrent Liabilities",
+      "importance": 16
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+---
+interface Props {
+  id: string;
+  height?: string;
+}
+const { id, height = "400px" } = Astro.props;
+---
+
+<div id={id} class="chart" style={`width: 100%; height: ${height};`}></div>
+
+<style>
+  .chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+  }
+</style>

@@ -1,192 +1,155 @@
-# [Automated Daily Trading System](https://nicolaswilches-daily-trading-system-main-2ez8iq.streamlit.app/)
+# Daily Trading System
 
 ![Python](https://img.shields.io/badge/Python-3.12+-blue?logo=python&logoColor=white)
 ![uv](https://img.shields.io/badge/uv-package%20manager-blueviolet)
 ![LightGBM](https://img.shields.io/badge/LightGBM-gradient%20boosting-green)
-![Streamlit](https://img.shields.io/badge/Streamlit-dashboard-red?logo=streamlit)
+![Astro](https://img.shields.io/badge/Astro-5.x-orange?logo=astro&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/hosted-GitHub%20Pages-blue)
 
-A quantitative trading pipeline that forecasts next-day stock price direction and magnitude for major US equities. Combines two LightGBM models (classification + regression) with a live Streamlit dashboard for real-time signal generation and strategy backtesting.
+A quantitative pipeline that forecasts next-day price direction and magnitude for five major US equities (AAPL, MSFT, AMZN, TSLA, NVDA). Two LightGBM models (classification + regression) drive daily BUY / SELL / HOLD signals. Results are published to a static dashboard that refreshes daily via GitHub Actions.
 
----
-
-## Overview
-
-The system is structured as two cooperating modules:
-
-1. **Offline Pipeline:** Ingests 5 years of historical OHLCV and corporate fundamentals from SimFin, engineers 70+ features with Polars, and trains two LightGBM models optimized via Optuna Bayesian search.
-2. **Live Dashboard:** A Streamlit application that fetches real-time data, runs inference, displays trading signals, and simulates historical strategy performance against a buy-and-hold benchmark.
-
-**Core stack:** Polars, scikit-learn, Optuna, Streamlit, SimFin API
+**Live dashboard:** [nicolaswilches.github.io/daily-trading-system](https://nicolaswilches.github.io/daily-trading-system)
 
 ---
 
-## Pipeline Architecture
+## Architecture
 
 ```text
 SimFin API
     │
     ▼
-src/fetch_data.py  ──►  data/raw/  (prices, fundamentals — Parquet)
+src/fetch_data.py  ──►  data/raw/                  (prices, fundamentals)
     │
     ▼
-src/etl.py  ──►  data/processed/features.parquet  (70+ engineered features)
+src/etl.py         ──►  data/processed/features.parquet   (64 engineered features)
     │
     ▼
-src/train.py  ──►  models/  (classifier.joblib · regressor.joblib · features_list.joblib)
+src/train.py       ──►  models/                    (classifier, regressor, split_meta)
     │
     ▼
-src/predict.py  +  SimFin API (live)
+scripts/generate_web_data.py  ──►  web/public/data/*.json
     │
     ▼
-Streamlit Dashboard  (main.py + pages/)
+Astro static site (web/)  ──►  GitHub Pages
 ```
 
----
+Two GitHub Actions workflows automate the loop:
 
-## Project Structure
-
-```text
-daily-trading-system/
-├── .streamlit/
-│   └── config.toml           # Streamlit theme (Catppuccin Mocha)
-├── data/
-│   ├── raw/                  # Ingested CSVs and Parquet files (gitignored)
-│   └── processed/
-│       └── features.parquet  # Engineered feature set
-├── docs/
-│   ├── ai_usage_log.md       # AI collaboration log
-│   └── executive_summary.md  # Project vision and approach (also as .pdf)
-├── models/
-│   ├── classifier.joblib     # Trained LightGBM classifier
-│   ├── regressor.joblib      # Trained LightGBM regressor
-│   └── features_list.joblib  # Feature column order for inference
-├── notebooks/
-│   ├── etl.ipynb                 # ETL prototyping
-│   └── model_exploration.ipynb   # Model experimentation
-├── pages/
-│   ├── 00_Home.py            # Landing page
-│   ├── 01_Market_Analysis.py # Live signal dashboard
-│   ├── 02_Trading_Strategy.py# Backtesting engine
-│   └── 03_Methodology.py     # Model insights and validation
-├── scripts/
-│   ├── debug_tickers.py      # Ticker mapping diagnostic
-│   └── test_api.py           # API authentication diagnostic
-├── src/
-│   ├── api_wrapper.py        # SimFin API v3 client (OOP, rate-limited)
-│   ├── etl.py                # Feature engineering pipeline
-│   ├── fetch_data.py         # Data ingestion from SimFin
-│   ├── predict.py            # Real-time inference engine
-│   ├── styles.py             # Custom CSS and Plotly theming
-│   └── train.py              # Model training and hyperparameter tuning
-├── main.py                   # Streamlit entry point
-├── pyproject.toml            # Dependencies and project metadata (uv)
-└── requirements.txt          # Pinned dependencies (alternative to uv)
-```
+- **`.github/workflows/daily-update.yml`** — runs on a weekday cron (22:00 UTC, after US close). Pulls fresh data, regenerates JSON, commits to `main`.
+- **`.github/workflows/deploy.yml`** — triggered by commits under `web/`. Builds the Astro site and deploys to GitHub Pages.
 
 ---
 
-## Quick Start
-
-**Prerequisites:** Python 3.12+, [`uv`](https://docs.astral.sh/uv/), and a [SimFin API key](https://simfin.com/).
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/nicolaswilches/daily-trading-system.git
-cd daily-trading-system
-
-# 2. Configure environment — create a .env file with your SimFin API key
-echo "SIMFIN_API_KEY=your_api_key_here" > .env
-
-# 3. Install dependencies
-uv sync
-```
-
----
-
-## Running the Pipeline
-
-Run each step in order to reproduce the full pipeline from raw data to trained models.
-
-```bash
-# Step 1 — Ingest data from SimFin API (downloads ~5 years of prices + fundamentals)
-uv run src/fetch_data.py
-
-# Step 2 — Engineer features (point-in-time joins, technical indicators, fundamentals)
-uv run src/etl.py
-
-# Step 3 — Train and optimize both models via Optuna Bayesian search
-uv run src/train.py
-```
-
-Pre-trained models are already included in `models/` — steps 1–3 are only needed to retrain.
-
----
-
-## Running the Dashboard
-
-```bash
-uv run streamlit run main.py
-```
-
-The app will open at `http://localhost:8501`. Four pages are available:
-
-| Page | Description |
-| --- | --- |
-| Home | Project overview and feature summary |
-| Market Analysis | Live trading signals for selected tickers |
-| Trading Strategy | Interactive backtesting with configurable parameters |
-| Methodology | Model validation metrics and feature importance |
-
----
-
-## Feature Engineering
-
-The ETL pipeline generates 70+ features from daily price data and quarterly fundamentals:
-
-| Category | Features |
-| --- | --- |
-| **Trend** | Distance from SMA-20, SMA-50, SMA-200 |
-| **Momentum** | RSI proxy, 1-day log return |
-| **Volatility** | Bollinger Band width (20-day rolling std), ATR-14 |
-| **Fundamentals** | Return on Assets (ROA), Net Margin |
-
-**Anti-leakage design:** fundamentals are aligned to prices using point-in-time joins (no future data seen during training). Validation uses 5-fold `TimeSeriesSplit` to respect temporal ordering.
-
----
-
-## Model Architecture
-
-Two LightGBM models are trained independently, each tuned with 30 Optuna trials:
+## Modeling
 
 | Model | Objective | Metric | Output |
 | --- | --- | --- | --- |
-| **Classifier** | Binary up/down direction | Precision (minimize false buys) | `prob_up` ∈ [0, 1] |
-| **Regressor** | Next-day log-return magnitude | RMSE | `pred_log_return` |
+| Classifier | Binary up/down | Precision | `prob_up` ∈ [0, 1] |
+| Regressor | Next-day log-return | RMSE | `pred_log_return` |
 
-**Signal generation:**
+**Signal rules**
 
-- `BUY` — `prob_up > 0.55`
-- `SELL` — `prob_up < 0.45`
-- `HOLD` — otherwise
+- `BUY` when `prob_up > 0.55`
+- `SELL` when `prob_up < 0.45`
+- `HOLD` otherwise
+- Target price = `current_price × exp(pred_log_return)`
 
-**Target price:** `current_price × exp(pred_log_return)`
+**Train / holdout split.** The last 20 % of unique dates are held out chronologically. Optuna (30-trial Bayesian search) and final model fitting only see the train portion. All metrics displayed on the dashboard come from the holdout — no in-sample leakage.
 
----
-
-## Data Sources
-
-- **Provider:** [SimFin](https://simfin.com/), free-tier API (daily prices + quarterly fundamentals)
-- **Coverage:** 5 years of historical data
-- **Tickers:** AAPL, MSFT, AMZN, TSLA, NVDA
+**Anti-leakage design.** Fundamentals are joined point-in-time (no future data). Validation uses 5-fold `TimeSeriesSplit` on the train portion only.
 
 ---
 
-## Financial Disclaimer
+## Features (64 total)
 
-This project is developed for **educational and research purposes only**. The signals and predictions generated by this system do not constitute financial advice. Past performance of any strategy does not guarantee future results. Always consult a qualified financial advisor before making investment decisions.
+| Category | Examples |
+| --- | --- |
+| Trend | Distance from SMA-20 / SMA-50 / SMA-200 |
+| Momentum | RSI proxy, 1-day log return |
+| Volatility | 20-day rolling std, ATR-14 |
+| Fundamentals | ROA, Net Margin (forward-filled between quarterly reports) |
 
 ---
 
-## Authors
+## Quick start
 
-Nicolás Higuera, Gilles Hamers, Madelyn Ehni, Salah Mneimne, Alberto Cabezudo
+**Prerequisites:** Python 3.12+, [`uv`](https://docs.astral.sh/uv/), Node 22+, a [SimFin API key](https://simfin.com/).
+
+```bash
+# 1. Clone
+git clone https://github.com/nicolaswilches/daily-trading-system.git
+cd daily-trading-system
+
+# 2. Configure
+echo "SIMFIN_API_KEY=your_api_key_here" > .env
+
+# 3. Install Python deps
+uv sync
+```
+
+### Run the pipeline
+
+```bash
+# Ingest raw data from SimFin (~5 years of prices + fundamentals)
+uv run python -m src.fetch_data
+
+# Feature engineering
+uv run python -m src.etl
+
+# Train both models (Optuna + train/holdout split)
+uv run python -m src.train
+
+# Produce JSON artifacts consumed by the web app
+uv run python scripts/generate_web_data.py
+```
+
+Pre-trained models are committed to `models/` — you only need to rerun the pipeline to retrain.
+
+### Run the web app locally
+
+```bash
+cd web
+npm install
+npm run dev     # http://localhost:4321/daily-trading-system
+npm run build   # static build → web/dist
+```
+
+---
+
+## Repository layout
+
+```text
+daily-trading-system/
+├── .github/workflows/         # daily-update.yml + deploy.yml
+├── data/
+│   ├── raw/                   # SimFin dumps (gitignored)
+│   └── processed/features.parquet
+├── models/                    # classifier, regressor, features list, split metadata
+├── notebooks/                 # ETL + model exploration
+├── scripts/
+│   └── generate_web_data.py   # Pipeline → JSON bridge
+├── src/
+│   ├── api_wrapper.py         # SimFin v3 client
+│   ├── etl.py                 # Feature engineering
+│   ├── fetch_data.py          # Data ingestion
+│   ├── predict.py             # Inference helpers
+│   └── train.py               # Training + Optuna + holdout evaluation
+├── web/                       # Astro static dashboard
+│   ├── src/
+│   │   ├── components/        # Nav, ThemeToggle, StatTile, Chart
+│   │   ├── layouts/Layout.astro
+│   │   ├── lib/               # charts.ts, data.ts
+│   │   ├── pages/             # index, predictions, strategy, methodology
+│   │   └── styles/global.css  # Tailwind v4 + light/dark tokens
+│   ├── public/data/*.json     # Generated by the Python pipeline
+│   ├── astro.config.mjs
+│   └── package.json
+├── pyproject.toml
+└── README.md
+```
+
+---
+
+## Disclaimer
+
+Educational and research project. Output does not constitute financial advice. Past performance does not predict future results.

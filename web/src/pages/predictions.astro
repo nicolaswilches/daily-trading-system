@@ -1,0 +1,159 @@
+---
+import Layout from "../layouts/Layout.astro";
+import StatTile from "../components/StatTile.astro";
+import Chart from "../components/Chart.astro";
+import { loadPredictions } from "../lib/data";
+
+const { predictions, cutoff_date } = loadPredictions();
+---
+
+<Layout title="Predictions">
+  <h1 class="text-3xl font-semibold tracking-tight mb-2">Per-ticker predictions</h1>
+  <p class="text-sm mb-8" style="color: var(--text-muted);">
+    Holdout cutoff <span class="num">{cutoff_date}</span>. Price charts show the last
+    250 trading days; the shaded region marks the out-of-sample window.
+  </p>
+
+  <div class="flex gap-2 mb-8 flex-wrap">
+    {
+      predictions.map((p) => (
+        <a
+          href={`#${p.ticker}`}
+          class="px-3 py-1.5 rounded-md text-sm num"
+          style="background: var(--bg-elevated); border: 1px solid var(--border);"
+        >
+          {p.ticker}
+        </a>
+      ))
+    }
+  </div>
+
+  {
+    predictions.map((p) => {
+      const toneClass =
+        p.signal === "BUY"
+          ? "signal-buy"
+          : p.signal === "SELL"
+            ? "signal-sell"
+            : "signal-hold";
+      return (
+        <section id={p.ticker} class="mb-16 scroll-mt-24">
+          <div class="flex items-baseline gap-4 mb-6">
+            <h2 class="text-2xl font-semibold">{p.ticker}</h2>
+            <span class={`text-sm font-medium ${toneClass}`}>{p.signal}</span>
+            <span class="text-xs num" style="color: var(--text-subtle);">
+              {p.last_date}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <StatTile
+              label="Current price"
+              value={`$${p.current_price.toFixed(2)}`}
+              hint={`${p.change_pct >= 0 ? "+" : ""}${p.change_pct.toFixed(2)}% prev close`}
+            />
+            <StatTile
+              label="Target price"
+              value={`$${p.target_price.toFixed(2)}`}
+              tone="accent"
+              hint={`${((Math.exp(p.pred_log_return) - 1) * 100).toFixed(2)}% expected`}
+            />
+            <StatTile
+              label="Prob. up"
+              value={`${(p.prob_up * 100).toFixed(1)}%`}
+            />
+            <StatTile
+              label="Signal"
+              value={p.signal}
+              tone={
+                p.signal === "BUY"
+                  ? "positive"
+                  : p.signal === "SELL"
+                    ? "negative"
+                    : "neutral"
+              }
+            />
+          </div>
+
+          <Chart id={`chart-${p.ticker}`} height="360px" />
+        </section>
+      );
+    })
+  }
+
+  <script define:vars={{ predictions, cutoff_date }}>
+    window.__predictions = predictions;
+    window.__cutoff = cutoff_date;
+  </script>
+
+  <script>
+    import { mountChart, chartPalette } from "../lib/charts";
+
+    const predictions = (window as any).__predictions;
+    const cutoff_date = (window as any).__cutoff;
+
+    for (const p of predictions) {
+      mountChart(`chart-${p.ticker}`, (theme) => {
+        const pal = chartPalette(theme);
+        const dates = p.history.map((h) => h.date);
+        const closes = p.history.map((h) => h.close);
+        const cutoffIdx = dates.findIndex((d) => d >= cutoff_date);
+
+        return {
+          textStyle: { color: pal.text, fontFamily: "Inter, system-ui, sans-serif" },
+          grid: { left: 50, right: 20, top: 30, bottom: 40, containLabel: true },
+          tooltip: {
+            trigger: "axis",
+            backgroundColor: pal.bg,
+            borderColor: pal.border,
+            borderWidth: 1,
+            textStyle: { color: pal.text },
+            axisPointer: { type: "cross", lineStyle: { color: pal.muted, type: "dashed" } },
+            valueFormatter: (v) => `$${Number(v).toFixed(2)}`,
+          },
+          xAxis: {
+            type: "category",
+            data: dates,
+            axisLine: { lineStyle: { color: pal.border } },
+            axisLabel: { color: pal.textMuted, fontSize: 11 },
+          },
+          yAxis: {
+            type: "value",
+            scale: true,
+            axisLine: { show: false },
+            axisTick: { show: false },
+            axisLabel: { color: pal.textMuted, fontSize: 11 },
+            splitLine: { lineStyle: { color: pal.grid } },
+          },
+          series: [
+            {
+              name: "Close",
+              type: "line",
+              data: closes,
+              showSymbol: false,
+              lineStyle: { width: 2, color: pal.accent },
+              areaStyle: {
+                color: {
+                  type: "linear",
+                  x: 0, y: 0, x2: 0, y2: 1,
+                  colorStops: [
+                    { offset: 0, color: pal.accent + "55" },
+                    { offset: 1, color: pal.accent + "00" },
+                  ],
+                },
+              },
+              markArea:
+                cutoffIdx >= 0
+                  ? {
+                      silent: true,
+                      itemStyle: { color: pal.muted + "15" },
+                      data: [[{ xAxis: dates[cutoffIdx] }, { xAxis: dates[dates.length - 1] }]],
+                    }
+                  : undefined,
+            },
+          ],
+        };
+      });
+    }
+  </script>
+</Layout>
