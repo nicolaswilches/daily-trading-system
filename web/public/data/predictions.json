@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T23:14:22.866108+00:00",
+  "generated_at": "2026-05-27T23:21:36.369062+00:00",
   "cutoff_date": "2024-05-14",
   "predictions": [
     {
@@ -2531,9 +2531,9 @@
     {
       "ticker": "AMZN",
       "current_price": 205.7,
-      "target_price": 205.8221405507569,
-      "prob_up": 0.6826072497400425,
-      "pred_log_return": 0.0005936038055203735,
+      "target_price": 206.17521856626064,
+      "prob_up": 0.712292243274489,
+      "pred_log_return": 0.002307586160639978,
       "signal": "BUY",
       "change_pct": 0.4787026182102361,
       "last_date": "2025-05-29",
@@ -3794,9 +3794,9 @@
     {
       "ticker": "TSLA",
       "current_price": 358.43,
-      "target_price": 358.2844957523537,
-      "prob_up": 0.405530667977765,
-      "pred_log_return": -0.0004060312732829757,
+      "target_price": 358.09809467031255,
+      "prob_up": 0.26395347779556844,
+      "pred_log_return": -0.0009264266283341472,
       "signal": "SELL",
       "change_pct": 0.42869151022695284,
       "last_date": "2025-05-29",
@@ -5057,9 +5057,9 @@
     {
       "ticker": "NVDA",
       "current_price": 139.19,
-      "target_price": 139.48655760095411,
-      "prob_up": 0.32290835645356786,
-      "pred_log_return": 0.002128329095581275,
+      "target_price": 139.29690907543133,
+      "prob_up": 0.3348181984619814,
+      "pred_log_return": 0.0007677853227509213,
       "signal": "SELL",
       "change_pct": 3.249017135227361,
       "last_date": "2025-05-29",
