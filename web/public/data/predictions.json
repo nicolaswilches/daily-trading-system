@@ -1,22 +1,17 @@
 {
-  "generated_at": "2026-06-04T23:13:25.892252+00:00",
+  "generated_at": "2026-06-05T23:14:51.809390+00:00",
   "cutoff_date": "2024-05-14",
   "predictions": [
     {
       "ticker": "AAPL",
-      "current_price": 203.92,
-      "target_price": 204.04108362231574,
-      "prob_up": 0.5191574128983258,
+      "current_price": 201.45,
+      "target_price": 201.56961698565863,
+      "prob_up": 0.4267548554387643,
       "pred_log_return": 0.0005936038055203735,
-      "signal": "HOLD",
-      "change_pct": 1.6398345212580434,
-      "last_date": "2025-06-06",
+      "signal": "SELL",
+      "change_pct": -1.211259317379365,
+      "last_date": "2025-06-09",
       "history": [
-        {
-          "date": "2024-06-07",
-          "close": 196.89,
-          "volume": 53103912.0
-        },
         {
           "date": "2024-06-10",
           "close": 193.12,
@@ -1261,25 +1256,25 @@
           "date": "2025-06-06",
           "close": 203.92,
           "volume": 46607693.0
+        },
+        {
+          "date": "2025-06-09",
+          "close": 201.45,
+          "volume": 72862557.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "MSFT",
-      "current_price": 470.38,
-      "target_price": 470.65930224727776,
-      "prob_up": 0.2426438604413831,
+      "current_price": 472.75,
+      "target_price": 473.0307095059326,
+      "prob_up": 0.2621724526710815,
       "pred_log_return": 0.0005936038055203735,
       "signal": "SELL",
-      "change_pct": 0.5773178241532673,
-      "last_date": "2025-06-06",
+      "change_pct": 0.503847952719072,
+      "last_date": "2025-06-09",
       "history": [
-        {
-          "date": "2024-06-07",
-          "close": 423.85,
-          "volume": 13621650.0
-        },
         {
           "date": "2024-06-10",
           "close": 427.87,
@@ -2524,25 +2519,25 @@
           "date": "2025-06-06",
           "close": 470.38,
           "volume": 15285624.0
+        },
+        {
+          "date": "2025-06-09",
+          "close": 472.75,
+          "volume": 16469932.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "AMZN",
-      "current_price": 213.57,
-      "target_price": 213.6968135995389,
-      "prob_up": 0.34517931515583433,
+      "current_price": 216.98,
+      "target_price": 217.10883838941777,
+      "prob_up": 0.2859596006635612,
       "pred_log_return": 0.0005936038055203735,
       "signal": "SELL",
-      "change_pct": 2.722331778173248,
-      "last_date": "2025-06-06",
+      "change_pct": 1.596666198436103,
+      "last_date": "2025-06-09",
       "history": [
-        {
-          "date": "2024-06-07",
-          "close": 184.3,
-          "volume": 28021473.0
-        },
         {
           "date": "2024-06-10",
           "close": 187.06,
@@ -3787,25 +3782,25 @@
           "date": "2025-06-06",
           "close": 213.57,
           "volume": 39832500.0
+        },
+        {
+          "date": "2025-06-09",
+          "close": 216.98,
+          "volume": 38102502.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "TSLA",
-      "current_price": 295.14,
-      "target_price": 295.05550184040476,
-      "prob_up": 0.6032641429462802,
-      "pred_log_return": -0.0002863395600578199,
-      "signal": "BUY",
-      "change_pct": 3.6670179135932512,
-      "last_date": "2025-06-06",
+      "current_price": 308.58,
+      "target_price": 308.5290624390937,
+      "prob_up": 0.48339338285649164,
+      "pred_log_return": -0.0001650844692528269,
+      "signal": "HOLD",
+      "change_pct": 4.55377109168531,
+      "last_date": "2025-06-09",
       "history": [
-        {
-          "date": "2024-06-07",
-          "close": 177.48,
-          "volume": 56244932.0
-        },
         {
           "date": "2024-06-10",
           "close": 173.79,
@@ -5050,25 +5045,25 @@
           "date": "2025-06-06",
           "close": 295.14,
           "volume": 164747685.0
+        },
+        {
+          "date": "2025-06-09",
+          "close": 308.58,
+          "volume": 140908876.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "NVDA",
-      "current_price": 141.72,
-      "target_price": 141.83514947078467,
-      "prob_up": 0.38874353972945974,
-      "pred_log_return": 0.0008121839954545888,
-      "signal": "SELL",
-      "change_pct": 1.235802557325516,
-      "last_date": "2025-06-06",
+      "current_price": 142.63,
+      "target_price": 142.74855497314744,
+      "prob_up": 0.4530500666732678,
+      "pred_log_return": 0.0008308611695001616,
+      "signal": "HOLD",
+      "change_pct": 0.6421112051933298,
+      "last_date": "2025-06-09",
       "history": [
-        {
-          "date": "2024-06-07",
-          "close": 120.89,
-          "volume": 412385800.0
-        },
         {
           "date": "2024-06-10",
           "close": 121.79,
@@ -6313,6 +6308,11 @@
           "date": "2025-06-06",
           "close": 141.72,
           "volume": 153986153.0
+        },
+        {
+          "date": "2025-06-09",
+          "close": 142.63,
+          "volume": 185114494.0
         }
       ],
       "in_holdout": true
