@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14T23:00:39.185820+00:00",
+  "generated_at": "2026-07-15T23:01:13.365690+00:00",
   "cutoff_date": "2024-05-14",
   "predictions": [
     {
@@ -3794,7 +3794,7 @@
     {
       "ticker": "TSLA",
       "current_price": 319.41,
-      "target_price": 319.3984186764119,
+      "target_price": 319.39841867641184,
       "prob_up": 0.5399070420928774,
       "pred_log_return": -3.625914515477906e-05,
       "signal": "HOLD",
