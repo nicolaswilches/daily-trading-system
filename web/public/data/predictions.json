@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T03:22:56.063453+00:00",
+  "generated_at": "2026-11-04T02:01:46.180638+00:00",
   "cutoff_date": "2024-05-14",
   "predictions": [
     {
@@ -2531,9 +2531,9 @@
     {
       "ticker": "AMZN",
       "current_price": 243.04,
-      "target_price": 243.39415002065417,
-      "prob_up": 0.6754092035097459,
-      "pred_log_return": 0.0014561069908967878,
+      "target_price": 243.18431229682042,
+      "prob_up": 0.727773242480268,
+      "pred_log_return": 0.0005936038055203735,
       "signal": "BUY",
       "change_pct": -2.861710631494807,
       "last_date": "2025-11-06",
