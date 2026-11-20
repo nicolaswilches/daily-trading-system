@@ -1,22 +1,17 @@
 {
-  "generated_at": "2026-11-19T03:02:56.031158+00:00",
+  "generated_at": "2026-11-20T02:54:47.998290+00:00",
   "cutoff_date": "2024-05-14",
   "predictions": [
     {
       "ticker": "MSFT",
-      "current_price": 478.43,
-      "target_price": 478.2083083857448,
-      "prob_up": 0.5138925448238759,
-      "pred_log_return": -0.00046348053654227757,
-      "signal": "HOLD",
-      "change_pct": -1.7839546723599886,
-      "last_date": "2025-11-20",
+      "current_price": 472.12,
+      "target_price": 471.97383925711074,
+      "prob_up": 0.6000080461852638,
+      "pred_log_return": -0.0003096318140832251,
+      "signal": "BUY",
+      "change_pct": -1.3188972263445065,
+      "last_date": "2025-11-21",
       "history": [
-        {
-          "date": "2024-11-21",
-          "close": 412.87,
-          "volume": 20780162.0
-        },
         {
           "date": "2024-11-22",
           "close": 417.0,
@@ -1261,25 +1256,25 @@
           "date": "2025-11-20",
           "close": 478.43,
           "volume": 26802542.0
+        },
+        {
+          "date": "2025-11-21",
+          "close": 472.12,
+          "volume": 31769248.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "AMZN",
-      "current_price": 217.14,
-      "target_price": 217.28160183395994,
-      "prob_up": 0.7959803029938554,
+      "current_price": 220.69,
+      "target_price": 220.83391686808798,
+      "prob_up": 0.7664716662826939,
       "pred_log_return": 0.000651909750238255,
       "signal": "BUY",
-      "change_pct": -2.49225380573892,
-      "last_date": "2025-11-20",
+      "change_pct": 1.6348899327622846,
+      "last_date": "2025-11-21",
       "history": [
-        {
-          "date": "2024-11-21",
-          "close": 198.38,
-          "volume": 58800042.0
-        },
         {
           "date": "2024-11-22",
           "close": 197.12,
@@ -2524,25 +2519,25 @@
           "date": "2025-11-20",
           "close": 217.14,
           "volume": 50308962.0
+        },
+        {
+          "date": "2025-11-21",
+          "close": 220.69,
+          "volume": 68490464.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "TSLA",
-      "current_price": 395.23,
-      "target_price": 395.2596234758334,
-      "prob_up": 0.6318057443917772,
-      "pred_log_return": 7.494968932547409e-05,
+      "current_price": 391.09,
+      "target_price": 391.02924648500834,
+      "prob_up": 0.6514065700904274,
+      "pred_log_return": -0.00015535614393050035,
       "signal": "BUY",
-      "change_pct": -2.168370504220396,
-      "last_date": "2025-11-20",
+      "change_pct": -1.0474913341598668,
+      "last_date": "2025-11-21",
       "history": [
-        {
-          "date": "2024-11-21",
-          "close": 339.64,
-          "volume": 58011719.0
-        },
         {
           "date": "2024-11-22",
           "close": 352.56,
@@ -3787,25 +3782,25 @@
           "date": "2025-11-20",
           "close": 395.23,
           "volume": 113548827.0
+        },
+        {
+          "date": "2025-11-21",
+          "close": 391.09,
+          "volume": 100460633.0
         }
       ],
       "in_holdout": true
     },
     {
       "ticker": "NVDA",
-      "current_price": 180.64,
-      "target_price": 180.79029170702188,
-      "prob_up": 0.6159406840194369,
+      "current_price": 178.88,
+      "target_price": 179.0288273945531,
+      "prob_up": 0.6108516341684586,
       "pred_log_return": 0.0008316498043060233,
       "signal": "BUY",
-      "change_pct": -3.1524769461720004,
-      "last_date": "2025-11-20",
+      "change_pct": -0.9743135518157642,
+      "last_date": "2025-11-21",
       "history": [
-        {
-          "date": "2024-11-21",
-          "close": 146.67,
-          "volume": 400946570.0
-        },
         {
           "date": "2024-11-22",
           "close": 141.95,
@@ -5050,6 +5045,11 @@
           "date": "2025-11-20",
           "close": 180.64,
           "volume": 343504849.0
+        },
+        {
+          "date": "2025-11-21",
+          "close": 178.88,
+          "volume": 346926153.0
         }
       ],
       "in_holdout": true
